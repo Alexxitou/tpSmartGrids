@@ -20,7 +20,7 @@ import java.util.Map;
 public interface ISmartGrids {
 
     /*
-     * 1.a) Registran una planta con sus datos y caracteristicas
+     * 1.a) Registran una planta con sus datos y caracteristicas  ✅
      * 
      * Por defecto la planta se crea en estado activa.  
      * 
@@ -47,6 +47,7 @@ public interface ISmartGrids {
      * 1.b) Consultar plantas exstentes.
      * 
      * Que devuelve un lista con el detalle de cada planta:
+     *
      *  cada item debe respetar el formato: "{NOMBRE} ({ACTIVA|INACTIVA}): {FECHA_PUESTA_EN_FUNCIONAMIENTO}"
      * Por ejemplo:
      *     "Atucha II (ACTIVA): 2014-06-27T09:00:00"
@@ -63,6 +64,8 @@ public interface ISmartGrids {
      * @throws RuntimeException si la planta no existe
      */
     double capacidadMinimaCuota(String nombre);
+
+
 
     /*
      * 3) Activar, desactivar una planta y consultar si está activa. 

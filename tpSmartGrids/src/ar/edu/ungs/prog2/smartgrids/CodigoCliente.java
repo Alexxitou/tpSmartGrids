@@ -10,7 +10,7 @@ public class CodigoCliente {
     public static void main(String[] args) {
         ISmartGrids sistema = new SmartGrids();
         imprimirEstado("Inicio", sistema);
-
+        //Hola aaaaa aaaa
         System.out.println("\nRegistrando plantas...");
         sistema.registrarPlantaSolar("Solar Norte", "Ruta 1", 1000, INICIO,
                 "Sol", 0.8, 1500, 12, 10);

@@ -1,9 +1,25 @@
 package ar.edu.ungs.prog2.smartgrids;
 
-public class PlantaTermica {
+import java.time.LocalDate;
 
-	public PlantaTermica() {
-		// TODO Auto-generated constructor stub
+public class PlantaTermica extends Planta{
+
+	private String tipoCombustible;
+	private double objetivoEmisionesCO2;
+	private double capAlmacenamientoCombustible;
+	
+	public PlantaTermica(String nombre, String direccion, double capMaxGeneracion, boolean estadoPlanta, LocalDate fechaFuncionamiento, String tipoCombustible, double objetivoEmisionesCO2, double capAlmacenamientoCombustible) {
+		super(nombre,direccion,capMaxGeneracion,estadoPlanta,fechaFuncionamiento);
+		this.tipoCombustible=tipoCombustible;
+		this.objetivoEmisionesCO2=objetivoEmisionesCO2;
+		this.capAlmacenamientoCombustible=capAlmacenamientoCombustible;
+	
+	}
+	
+	@Override
+	public boolean cumpleCuota() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -11,7 +11,12 @@ public abstract class Planta {
 	private LocalDate  fechaFuncionamiento;
 	
 	
-	public Planta() {
+	public Planta(String nombre, String direccion, double capMaxGeneracion, boolean estadoPlanta, LocalDate fechaFuncionamiento) {
+		this.nombre=nombre;
+		this.direccion=direccion;
+		this.capMaxGeneracion=capMaxGeneracion;
+		this.estadoPlanta= true;
+		this.fechaFuncionamiento=fechaFuncionamiento;
 		
 	}
 	public void activar() {

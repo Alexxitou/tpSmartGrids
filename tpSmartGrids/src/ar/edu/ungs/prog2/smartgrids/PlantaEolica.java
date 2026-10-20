@@ -8,7 +8,7 @@ public class PlantaEolica extends PlantaRenovable {
     private double alturaTorre;
     private double velMinViento;
 
-    public PlantaEolica(String nombre, String direccion, double capMaxGeneracion, boolean estadoPlanta, LocalDate fechaFuncionamiento, String fuentePrimaria,double eficienciaPromedio, double cantAerogeneradores, double velVientoPromedio) {
+    public PlantaEolica(String nombre, String direccion, double capMaxGeneracion, boolean estadoPlanta, LocalDate fechaFuncionamiento, String fuentePrimaria,double eficienciaPromedio, double cantAerogeneradores, double alturaTorre, double velVientoPromedio) {
         super(nombre,direccion,capMaxGeneracion,estadoPlanta,fechaFuncionamiento,fuentePrimaria,eficienciaPromedio);
         this.cantAerogeneradores = cantAerogeneradores;
         this.alturaTorre = alturaTorre;

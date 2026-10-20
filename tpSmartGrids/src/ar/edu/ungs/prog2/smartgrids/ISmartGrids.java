@@ -20,7 +20,7 @@ import java.util.Map;
 public interface ISmartGrids {
 
     /*
-     * 1.a) Registran una planta con sus datos y caracteristicas.
+     * 1.a) Registran una planta con sus datos y caracteristicas
      * 
      * Por defecto la planta se crea en estado activa.  
      * 

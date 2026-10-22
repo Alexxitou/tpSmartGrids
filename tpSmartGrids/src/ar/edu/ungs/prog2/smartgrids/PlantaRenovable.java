@@ -1,18 +1,19 @@
 package ar.edu.ungs.prog2.smartgrids;
 
-import java.time.LocalDate;
 
 public abstract class PlantaRenovable extends Planta {
 	
 	private String fuentePrimaria;
-	private double eficienciaPromedio;
+	protected double eficienciaPromedio;
 	
 	
-	public PlantaRenovable(String nombre, String direccion, double capMaxGeneracion, String fechaHoraPuestaEnFuncionamiento, String fuentePrimaria,double eficienciaPromedio) {
-		super(nombre,direccion,capMaxGeneracion,fechaHoraPuestaEnFuncionamiento);
+	public PlantaRenovable(String nombre, String direccion, double capacidadMaxima, String fechaHoraPuestaEnFuncionamiento, String fuentePrimaria,double eficienciaPromedio) {
+		super(nombre,direccion,capacidadMaxima,fechaHoraPuestaEnFuncionamiento);
 		this.fuentePrimaria=fuentePrimaria;
 		this.eficienciaPromedio=eficienciaPromedio;
 	}
+	
+	
 	
 	public boolean esRenovable() {
 		return false;
@@ -20,9 +21,7 @@ public abstract class PlantaRenovable extends Planta {
 	public String getFuentePrimaria() {
 		return "";
 	}
-	@Override
-	public abstract boolean cumpleCuota() ;
-	
+	public abstract double capacidadMinimaCuota();
 	/*@Override
 	public String toString() {
 

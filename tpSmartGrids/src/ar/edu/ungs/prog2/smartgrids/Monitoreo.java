@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 public class Monitoreo {
     private Planta planta;
     private LocalDateTime fechaHora;
-    private double energiaGenerada;
+    protected double energiaGenerada;
     private int cantidadIncidencias;
 
     public Monitoreo(Planta planta, LocalDateTime fechaHora, double energiaGenerada, int cantidadIncidencias) {
@@ -26,6 +26,11 @@ public class Monitoreo {
 
 	public LocalDateTime getFechaHora() {
 		return fechaHora;
+	}
+
+
+	public double getEnergiaGenerada() {
+		return energiaGenerada;
 	}
 
 }

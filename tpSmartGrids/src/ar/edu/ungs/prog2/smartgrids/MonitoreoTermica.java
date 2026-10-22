@@ -1,5 +1,7 @@
 package ar.edu.ungs.prog2.smartgrids;
 
+import java.time.LocalDateTime;
+
 public class MonitoreoTermica extends Monitoreo {
     private double Co2Generado;
     private double combustibleUtilizado;
@@ -12,4 +14,12 @@ public class MonitoreoTermica extends Monitoreo {
 
     public crearMonitoreoTermica() {
     }
+
+	public double getCO2generado() {
+		return Co2Generado;
+	}
+
+	public double getEnergiaGenerada() {
+		return energiaGenerada;
+	}
 }

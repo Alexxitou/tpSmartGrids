@@ -1,6 +1,5 @@
 package ar.edu.ungs.prog2.smartgrids;
 
-import java.time.LocalDate;
 
 public class PlantaTermica extends Planta{
 
@@ -17,10 +16,33 @@ public class PlantaTermica extends Planta{
 	}
 
 	
+
+
 	@Override
-	public boolean cumpleCuota() {
-		// TODO Auto-generated method stub
-		return false;
+	public double capacidadMinimaCuota() {
+	    	return capacidadMaxima/2;
+		
 	}
+
+
+	@Override
+	public boolean cumpleCuota(Monitoreo monitoreo) {
+		if(!(monitoreo instanceof MonitoreoTermica)) {
+			throw new RuntimeException("Se requiere un monitoreoTermica");
+			
+		}
+		MonitoreoTermica mt = (MonitoreoTermica) monitoreo;
+		
+		double emisionesCO2PorHora= mt.getCO2generado();
+		double energiaGenerada=mt.getEnergiaGenerada();
+		
+		if (emisionesCO2PorHora <objetivoEmisionesCo2PorHora && energiaGenerada>=capacidadMinimaCuota()){
+			return true;
+		}
+		return false;
+		
+	}
+
+
 
 }

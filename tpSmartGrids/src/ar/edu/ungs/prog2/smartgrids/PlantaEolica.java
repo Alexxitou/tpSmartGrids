@@ -16,10 +16,16 @@ public class PlantaEolica extends PlantaRenovable {
     }
 
 	
-	@Override
+	/*@Override
 	public boolean cumpleCuota() {
 		// TODO Auto-generated method stub
 		return false;
+	}*/
+
+
+	@Override
+	public double capacidadMinimaCuota() {
+		return capacidadMaxima * eficienciaPromedio;
 	}
 
 

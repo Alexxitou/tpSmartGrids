@@ -216,11 +216,25 @@ public class SmartGrids implements ISmartGrids {
 		
 		
 	}
-
+	/*
+     * 2) Consulta cuanta energia debe generar la planta en una hora para
+     * cumplir la cuota. En las solares se tiene en cuenta la radiacion;
+     * en las eolicas e hidraulicas, la eficiencia. Las termicas deben
+     * generar la mitad de su capacidad y emitir menos CO2 que el objetivo
+     * por hora.
+     *
+     * @throws RuntimeException si la planta no existe
+     */
+	
+	
 	@Override
 	public double capacidadMinimaCuota(String nombre) {
-		// TODO Auto-generated method stub
-		return 0;
+		if(!conjuntoPlantas.containsKey(nombre)) { //verifica si la planta no existe en el diccionario
+			throw new RuntimeException("La planta no existe");
+		}
+		Planta planta = conjuntoPlantas.get(nombre);
+		
+		return planta.capacidadMinimaCuota();
 	}
 
 	@Override
@@ -244,14 +258,25 @@ public class SmartGrids implements ISmartGrids {
 	@Override
 	public void desactivarPlanta(String nombre, String fechaHora) {
 		
+		if(!conjuntoPlantas.containsKey(nombre)) { //verifica si la planta no existe en el diccionario
+			throw new RuntimeException("Planta no registrada");
+		}
+		
+
+		Planta planta= conjuntoPlantas.get(nombre); //obtiene la planta del diccionario
+		
+		planta.desactivar(); //desactiva la planta
+		
+		
 		//Por completar
 
 	}
 
 	@Override
 	public boolean estaActiva(String nombre) {
-		// TODO Auto-generated method stub
-		return false;
+		Planta planta= conjuntoPlantas.get(nombre); //obtiene la planta del diciconario
+
+		return planta.estaActiva(); //devuelve el estado
 	}
 
 	@Override

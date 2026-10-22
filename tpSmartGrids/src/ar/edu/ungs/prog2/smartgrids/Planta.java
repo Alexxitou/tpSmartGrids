@@ -1,6 +1,5 @@
 package ar.edu.ungs.prog2.smartgrids;
 
-import java.time.LocalDate;
 
 public abstract class Planta {
 	
@@ -32,12 +31,11 @@ public abstract class Planta {
 	public boolean estaActiva() {
 		return estadoPlanta; 
 	}
-	public double cuotaMinima() {
-		return 2; 
-	}
-	public abstract boolean cumpleCuota();
 	
+	public abstract boolean cumpleCuota(Monitoreo monitoreo);
 	
+	public abstract double capacidadMinimaCuota();
+
 	
 	
 	public String getNombre() {
@@ -46,4 +44,7 @@ public abstract class Planta {
 	public String getFechaHoraPuestaEnFuncionamiento() {
 		return fechaHoraPuestaEnFuncionamiento;
 	}
+	
+	
+	
 }

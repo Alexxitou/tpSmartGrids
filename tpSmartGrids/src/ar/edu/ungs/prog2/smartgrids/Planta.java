@@ -4,14 +4,14 @@ import java.time.LocalDate;
 
 public abstract class Planta {
 	
-	private String nombre;
-	private String direccion;
-	private double capMaxGeneracion;
-	private boolean estadoPlanta;
-	private LocalDate  fechaFuncionamiento;
+	protected String nombre;
+	protected String direccion;
+	protected double capMaxGeneracion;
+	protected boolean estadoPlanta;
+	protected LocalDate  fechaFuncionamiento;
 	
 	
-	public Planta(String nombre, String direccion, double capMaxGeneracion, boolean estadoPlanta, LocalDate fechaFuncionamiento) {
+	public Planta(String nombre, String direccion, double capMaxGeneracion, LocalDate fechaFuncionamiento) {
 		this.nombre=nombre;
 		this.direccion=direccion;
 		this.capMaxGeneracion=capMaxGeneracion;
@@ -20,14 +20,45 @@ public abstract class Planta {
 		
 	}
 	public void activar() {
-		
+		this.estadoPlanta=true;
 	}
 	public void desactivar() {
-		
+		this.estadoPlanta=false;
+	}
+	
+	public boolean estaActiva() {
+		return estadoPlanta; 
 	}
 	public double cuotaMinima() {
-		return 2;
+		return 2; 
 	}
-	public abstract boolean cumpleCuota(Monitoreo);
+	public abstract boolean cumpleCuota();
 	
+	
+	
+	
+	
+	public String mostrarInfo() {
+		return toString();
+		
+	}
+	@Override
+	public  String toString() {
+		if (estadoPlanta) {
+		return "Nombre: "+nombre+"\n"+
+				"direccion: "+direccion+"\n"+
+				"capacidad Máxima de Generación: "+capMaxGeneracion+"\n"+
+				"Estado de la planta: "+"ACTIVA"+"\n"+
+				"Fecha puesta en funcionamiento: "+fechaFuncionamiento+"\n";
+		} else {
+			return "Nombre: "+nombre+"\n"+
+					"direccion: "+direccion+"\n"+
+					"capacidad Máxima de Generación: "+capMaxGeneracion+"\n"+
+					"Estado de la planta: "+"DESACTIVADA"+"\n"+
+					"Fecha puesta en funcionamiento: "+fechaFuncionamiento+"\n";
+		}
+	}
+	public String getNombre() {
+		return nombre;		
+	}
 }

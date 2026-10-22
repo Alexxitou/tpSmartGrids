@@ -18,4 +18,14 @@ public class Monitoreo {
     public void crearMonitoreo() {
     }
 
+
+	public Planta getPlanta() {
+		return planta;
+	}
+
+
+	public LocalDateTime getFechaHora() {
+		return fechaHora;
+	}
+
 }

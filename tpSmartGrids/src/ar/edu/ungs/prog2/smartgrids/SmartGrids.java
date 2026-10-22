@@ -2,6 +2,7 @@ package ar.edu.ungs.prog2.smartgrids;
 
 import java.util.Map;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,6 +18,8 @@ public class SmartGrids implements ISmartGrids {
 		
 		
 	}
+	
+	/* IGNORAR
 	public void registrarPlanta(Planta planta) {
 		String nombrePlanta= planta.getNombre(); //Toma el nombre de la planta
 		
@@ -71,7 +74,22 @@ public class SmartGrids implements ISmartGrids {
 	
 	
 	
-	//esto es para testeos
+	public void cambiarEstadoPlanta(String nombrePlanta) {
+		if(!conjuntoPlantas.containsKey(nombrePlanta)) { //verifica si la planta no está registrada
+			throw new IllegalArgumentException("Planta no registrada");
+		} 
+		Planta planta = conjuntoPlantas.get(nombrePlanta); //toma la planta del conjuntoPlantas
+		if (planta.estaActiva()){
+			planta.desactivar();
+		} else {
+			planta.activar();
+		}
+		
+	}
+	
+	
+	
+
 	public int cantidadMonitoreos(String nombrePlanta) {
 	    // Busca el diccionario de monitoreos de la planta.
 	    HashMap<LocalDateTime, Monitoreo> monitoreos =
@@ -87,6 +105,7 @@ public class SmartGrids implements ISmartGrids {
 	}
 
 	
+	*/
 	
 	
 	
@@ -96,8 +115,14 @@ public class SmartGrids implements ISmartGrids {
 	
 	
 	
-	
-	
+    /*
+     * 1.a) Registran una planta con sus datos y caracteristicas  ✅
+     * 
+     * Por defecto la planta se crea en estado activa.  
+     * 
+     * @throws RuntimeException si ya existe ese nombre o falta o es 
+     *         inaceptable algun dato.
+     */
 	
 	
 
@@ -105,15 +130,34 @@ public class SmartGrids implements ISmartGrids {
 	public void registrarPlantaSolar(String nombre, String direccion, double capacidadMaxima,
 			String fechaHoraPuestaEnFuncionamiento, String fuentePrimaria, double eficienciaPromedio,
 			double superficieCubierta, int cantidadPaneles, double horasRadiacionDiaria) {
-		// TODO Auto-generated method stub
-
+		
+		if (conjuntoPlantas.containsKey(nombre)) { //
+			 throw new IllegalArgumentException("Ya existe una planta con ese nombre");
+		}
+		//crear la planta
+		PlantaSolar Planta= new PlantaSolar(nombre, direccion, capacidadMaxima, fechaHoraPuestaEnFuncionamiento, fuentePrimaria, eficienciaPromedio, superficieCubierta, cantidadPaneles, horasRadiacionDiaria);
+		
+		conjuntoPlantas.put(nombre, Planta); //agrega la planta al diccionario de plantas
+		
+		conjuntoMonitoreos.put(nombre, new HashMap<>());//agrega al diccionario de Monitoreos el nombre de la planta y un diccionario vacío para meter sus monitoreos.
+			
 	}
 
 	@Override
 	public void registrarPlantaEolica(String nombre, String direccion, double capacidadMaxima,
 			String fechaHoraPuestaEnFuncionamiento, String fuentePrimaria, double eficienciaPromedio,
 			int cantidadAerogeneradores, double alturaTorres, double velocidadMinimaViento) {
-		// TODO Auto-generated method stub
+
+		if (conjuntoPlantas.containsKey(nombre)) { //
+			 throw new IllegalArgumentException("Ya existe una planta con ese nombre");
+		}
+		
+		PlantaEolica Planta= new PlantaEolica(nombre, direccion, capacidadMaxima, fechaHoraPuestaEnFuncionamiento, fuentePrimaria, eficienciaPromedio, cantidadAerogeneradores, alturaTorres, velocidadMinimaViento);
+		
+		conjuntoPlantas.put(nombre, Planta);
+		
+		conjuntoMonitoreos.put(nombre, new HashMap<>());
+		
 
 	}
 
@@ -121,22 +165,56 @@ public class SmartGrids implements ISmartGrids {
 	public void registrarPlantaHidraulica(String nombre, String direccion, double capacidadMaxima,
 			String fechaHoraPuestaEnFuncionamiento, String fuentePrimaria, double eficienciaPromedio,
 			int cantidadTurbinas, double capacidadEmbalse) {
-		// TODO Auto-generated method stub
 
+		PlantaHidraulica Planta = new PlantaHidraulica(nombre, direccion, capacidadMaxima, fechaHoraPuestaEnFuncionamiento, fuentePrimaria, eficienciaPromedio, cantidadTurbinas, capacidadEmbalse);
+
+		conjuntoPlantas.put(nombre,Planta);
+		
+		conjuntoMonitoreos.put(nombre, new HashMap<>());
 	}
 
 	@Override
 	public void registrarPlantaTermica(String nombre, String direccion, double capacidadMaxima,
 			String fechaHoraPuestaEnFuncionamiento, String tipoCombustible, double objetivoEmisionesCo2PorHora,
 			double capacidadAlmacenamientoCombustible) {
-		// TODO Auto-generated method stub
+
+		PlantaTermica Planta = new PlantaTermica(nombre, direccion, capacidadMaxima, fechaHoraPuestaEnFuncionamiento, tipoCombustible, objetivoEmisionesCo2PorHora, capacidadAlmacenamientoCombustible);
+		
+
+		conjuntoPlantas.put(nombre,Planta);
+		
+		conjuntoMonitoreos.put(nombre, new HashMap<>());
 
 	}
 
 	@Override
 	public List<String> consultarPlantas() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		List<String> resultado = new ArrayList<>(); // crea la lista
+		
+		
+	    for (String nombre : conjuntoPlantas.keySet()) { // Recorre en el diccionario las plantas por nombre
+
+	        Planta planta = conjuntoPlantas.get(nombre); //obtiene la planta
+
+	        String estado; //esto es para guardar el estado
+	        
+	        if (planta.estaActiva()) {
+	            estado = "ACTIVA";
+	        } else {
+	            estado = "INACTIVA";
+	        }
+
+	        // Construye el texto con el formato.
+	        String texto = planta.getNombre()+ " (" + estado + "): "+ planta.getFechaHoraPuestaEnFuncionamiento();
+
+	        // Agrega el texto a la lista.
+	        resultado.add(texto);
+	    }
+
+	    return resultado; // Devuelve la lista
+		
+		
 	}
 
 	@Override
@@ -147,13 +225,26 @@ public class SmartGrids implements ISmartGrids {
 
 	@Override
 	public void activarPlanta(String nombre, String fechaHora) {
-		// TODO Auto-generated method stub
-
+		
+		if(!conjuntoPlantas.containsKey(nombre)) { //verifica si la planta no existe en el diccionario
+			throw new RuntimeException("Planta no registrada");
+		}
+		
+		LocalDateTime fecha= LocalDateTime.parse(fechaHora); //convierte el string en LocalDateTime
+		
+		Planta planta= conjuntoPlantas.get(nombre); //obtiene la planta del diccionario
+		
+		planta.activar(); //activa la planta
+		
+		
+		//Por completar
+		
 	}
 
 	@Override
 	public void desactivarPlanta(String nombre, String fechaHora) {
-		// TODO Auto-generated method stub
+		
+		//Por completar
 
 	}
 

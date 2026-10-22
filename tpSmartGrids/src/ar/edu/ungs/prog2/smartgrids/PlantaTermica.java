@@ -5,16 +5,17 @@ import java.time.LocalDate;
 public class PlantaTermica extends Planta{
 
 	private String tipoCombustible;
-	private double objetivoEmisionesCO2;
-	private double capAlmacenamientoCombustible;
+	private double objetivoEmisionesCo2PorHora;
+	private double capacidadAlmacenamientoCombustible;
 	
-	public PlantaTermica(String nombre, String direccion, double capMaxGeneracion, LocalDate fechaFuncionamiento, String tipoCombustible, double objetivoEmisionesCO2, double capAlmacenamientoCombustible) {
-		super(nombre,direccion,capMaxGeneracion,fechaFuncionamiento);
+	public PlantaTermica(String nombre, String direccion, double capacidadMaxima, String fechaHoraPuestaEnFuncionamiento, String tipoCombustible, double objetivoEmisionesCo2PorHora, double capacidadAlmacenamientoCombustible) {
+		super(nombre,direccion,capacidadMaxima,fechaHoraPuestaEnFuncionamiento);
 		this.tipoCombustible=tipoCombustible;
-		this.objetivoEmisionesCO2=objetivoEmisionesCO2;
-		this.capAlmacenamientoCombustible=capAlmacenamientoCombustible;
+		this.objetivoEmisionesCo2PorHora=objetivoEmisionesCo2PorHora;
+		this.capacidadAlmacenamientoCombustible=capacidadAlmacenamientoCombustible;
 	
 	}
+
 	
 	@Override
 	public boolean cumpleCuota() {

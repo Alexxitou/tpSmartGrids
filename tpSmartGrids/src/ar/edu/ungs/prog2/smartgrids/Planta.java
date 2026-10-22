@@ -6,17 +6,20 @@ public abstract class Planta {
 	
 	protected String nombre;
 	protected String direccion;
-	protected double capMaxGeneracion;
+	protected double capacidadMaxima;
 	protected boolean estadoPlanta;
-	protected LocalDate  fechaFuncionamiento;
+	protected String  fechaHoraPuestaEnFuncionamiento;
 	
 	
-	public Planta(String nombre, String direccion, double capMaxGeneracion, LocalDate fechaFuncionamiento) {
+	public Planta(String nombre, String direccion, double capacidadMaxima, String fechaHoraPuestaEnFuncionamiento) {
 		this.nombre=nombre;
 		this.direccion=direccion;
-		this.capMaxGeneracion=capMaxGeneracion;
+		this.capacidadMaxima=capacidadMaxima;
 		this.estadoPlanta= true;
-		this.fechaFuncionamiento=fechaFuncionamiento;
+		this.fechaHoraPuestaEnFuncionamiento=fechaHoraPuestaEnFuncionamiento;
+		
+		
+	
 		
 	}
 	public void activar() {
@@ -37,28 +40,10 @@ public abstract class Planta {
 	
 	
 	
-	
-	public String mostrarInfo() {
-		return toString();
-		
-	}
-	@Override
-	public  String toString() {
-		if (estadoPlanta) {
-		return "Nombre: "+nombre+"\n"+
-				"direccion: "+direccion+"\n"+
-				"capacidad Máxima de Generación: "+capMaxGeneracion+"\n"+
-				"Estado de la planta: "+"ACTIVA"+"\n"+
-				"Fecha puesta en funcionamiento: "+fechaFuncionamiento+"\n";
-		} else {
-			return "Nombre: "+nombre+"\n"+
-					"direccion: "+direccion+"\n"+
-					"capacidad Máxima de Generación: "+capMaxGeneracion+"\n"+
-					"Estado de la planta: "+"DESACTIVADA"+"\n"+
-					"Fecha puesta en funcionamiento: "+fechaFuncionamiento+"\n";
-		}
-	}
 	public String getNombre() {
 		return nombre;		
+	}
+	public String getFechaHoraPuestaEnFuncionamiento() {
+		return fechaHoraPuestaEnFuncionamiento;
 	}
 }

@@ -8,11 +8,12 @@ public abstract class PlantaRenovable extends Planta {
 	private double eficienciaPromedio;
 	
 	
-	public PlantaRenovable(String nombre, String direccion, double capMaxGeneracion, LocalDate fechaFuncionamiento, String fuentePrimaria,double eficienciaPromedio) {
-		super(nombre,direccion,capMaxGeneracion,fechaFuncionamiento);
+	public PlantaRenovable(String nombre, String direccion, double capMaxGeneracion, String fechaHoraPuestaEnFuncionamiento, String fuentePrimaria,double eficienciaPromedio) {
+		super(nombre,direccion,capMaxGeneracion,fechaHoraPuestaEnFuncionamiento);
 		this.fuentePrimaria=fuentePrimaria;
 		this.eficienciaPromedio=eficienciaPromedio;
 	}
+	
 	public boolean esRenovable() {
 		return false;
 	}

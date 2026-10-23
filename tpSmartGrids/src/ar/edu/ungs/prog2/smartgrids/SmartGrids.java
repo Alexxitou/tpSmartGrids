@@ -295,9 +295,28 @@ public class SmartGrids implements ISmartGrids {
 
 	@Override
 	public void registrarMonitoreo(String nombre, String fechaHora, double energiaGenerada, int incidencias) {
-		// TODO Auto-generated method stub
 
+		if (!conjuntoPlantas.containsKey(nombre)) {
+			throw new RuntimeException("No existe esa planta");
+		}
+		
+		if (!conjuntoPlantas.get(nombre).estaActiva()) {
+			throw new RuntimeException("La planta esta inactiva.");
+		}
+		//terminar las verificaciones que pide la consigna
+
+		LocalDateTime fecha = LocalDateTime.parse(fechaHora);//vcr bien si en los test queda bien el parseo 
+
+		Planta planta = conjuntoPlantas.get(nombre);// para usarlo dsp al crear el monitoreo
+
+		HashMap<LocalDateTime, Monitoreo> monitoreosDePlanta = conjuntoMonitoreos.get(nombre);
+
+		Monitoreo monitoreo = new Monitoreo(planta, fecha, energiaGenerada, incidencias);
+
+		monitoreosDePlanta.put(fecha, monitoreo); // IMPORTANTE!! CON ESTO ANADO AL DICCIONARIO INTERIOR
 	}
+		//armando el codigo, pienso que no haria falta que tenga como atributo el objeto planta, si ya lo busca por diccionario, podria sacarse o ponerle algun nombre al monitoreo	
+
 
 	@Override
 	public void registrarMonitoreo(String nombre, String fechaHora, double energiaGenerada, int incidencias,

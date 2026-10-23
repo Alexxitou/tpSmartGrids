@@ -251,6 +251,15 @@ public class SmartGrids implements ISmartGrids {
 		return planta.capacidadMinimaCuota();
 	}
 
+	/*
+     * 3) Activar, desactivar una planta y consultar si está activa. 
+     * 
+     * La actualizacion y consulta se debe resolver en O(1).
+     * 
+     * @throws RuntimeException si la planta no existe o el formato de 
+     *         fechaHora es inválido.
+     */
+	
 	@Override
 	public void activarPlanta(String nombre, String fechaHora) {
 		

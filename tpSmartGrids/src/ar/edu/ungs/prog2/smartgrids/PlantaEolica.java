@@ -16,16 +16,16 @@ public class PlantaEolica extends PlantaRenovable {
     }
 
 	
-	/*@Override
-	public boolean cumpleCuota() {
-		// TODO Auto-generated method stub
-		return false;
-	}*/
+	@Override
+	public boolean cumpleCuota(Monitoreo monitoreo) {
+		 return monitoreo.getEnergiaGenerada()>= capacidadMinimaCuota();
+		
+	}
 
 
 	@Override
 	public double capacidadMinimaCuota() {
-		return capacidadMaxima * eficienciaPromedio;
+		return capacidadMaxima * (eficienciaPromedio/100);
 	}
 
 

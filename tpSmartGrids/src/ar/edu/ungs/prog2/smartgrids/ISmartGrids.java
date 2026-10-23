@@ -64,6 +64,7 @@ public interface ISmartGrids {
      * @throws RuntimeException si la planta no existe
      */
     double capacidadMinimaCuota(String nombre);
+    
 
 
 

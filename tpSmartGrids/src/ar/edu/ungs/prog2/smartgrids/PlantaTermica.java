@@ -27,11 +27,11 @@ public class PlantaTermica extends Planta{
 
 	@Override
 	public boolean cumpleCuota(Monitoreo monitoreo) {
-		if(!(monitoreo instanceof MonitoreoTermica)) {
+		if(!(monitoreo instanceof MonitoreoTermica)) { //Para descartar los monitoreos que no sean MonitoreoTermica que se pasen como parámetro
 			throw new RuntimeException("Se requiere un monitoreoTermica");
 			
 		}
-		MonitoreoTermica mt = (MonitoreoTermica) monitoreo;
+		MonitoreoTermica mt = (MonitoreoTermica) monitoreo; 
 		
 		double emisionesCO2PorHora= mt.getCO2generado();
 		double energiaGenerada=mt.getEnergiaGenerada();

@@ -1,6 +1,7 @@
 package ar.edu.ungs.prog2.smartgrids;
 
 import java.util.Map;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -187,6 +188,16 @@ public class SmartGrids implements ISmartGrids {
 
 	}
 
+	 /*
+     * 1.b) Consultar plantas exstentes.
+     * 
+     * Que devuelve un lista con el detalle de cada planta:
+     *
+     *  cada item debe respetar el formato: "{NOMBRE} ({ACTIVA|INACTIVA}): {FECHA_PUESTA_EN_FUNCIONAMIENTO}"
+     * Por ejemplo:
+     *     "Atucha II (ACTIVA): 2014-06-27T09:00:00"
+     */
+	
 	@Override
 	public List<String> consultarPlantas() {
 		
@@ -204,17 +215,20 @@ public class SmartGrids implements ISmartGrids {
 	        } else {
 	            estado = "INACTIVA";
 	        }
+	        
+	     
+	        StringBuilder texto = new StringBuilder(); //Construye el texto usando StringBuilder
 
-	        // Construye el texto con el formato.
-	        String texto = planta.getNombre()+ " (" + estado + "): "+ planta.getFechaHoraPuestaEnFuncionamiento();
+	        texto.append(planta.getNombre());
+	        texto.append(" (");
+	        texto.append(estado);
+	        texto.append("): ");
+	        texto.append(planta.getFechaHoraPuestaEnFuncionamiento());
 
-	        // Agrega el texto a la lista.
-	        resultado.add(texto);
+
+	        resultado.add(texto.toString());// Convierte el StringBuilder a String y lo agrega a la lista.
 	    }
-
-	    return resultado; // Devuelve la lista
-		
-		
+	    return resultado; // Devuelve la lista		
 	}
 	/*
      * 2) Consulta cuanta energia debe generar la planta en una hora para
@@ -311,10 +325,52 @@ public class SmartGrids implements ISmartGrids {
 		return null;
 	}
 
+	/*
+     * 7) Cuenta, para cada hora del dia, en cuantos dias se cumplio la cuota
+     * entre las fechas indicadas, incluidas ambas.
+     *
+     * Devuelve un arreglo con 24 posiciones, una por cada hora del dia
+     * 
+     * @throws RuntimeException si la planta no existe o si desde es
+     *         posterior a hasta.
+     */
+	
 	@Override
-	public int[] histogramaCumplimiento(String nombre, String fechaDesde, String fechaHasta) {
-		// TODO Auto-generated method stub
-		return null;
+	public int[] histogramaCumplimiento(String nombre, String fechaDesde, String fechaHasta) { //POR COMPLETAR	
+
+		LocalDate desde= LocalDate.parse(fechaDesde); //convierte el string en LocalDate
+		LocalDate hasta= LocalDate.parse(fechaHasta); //convierte el string en LocalDate
+
+
+		
+		if(!conjuntoPlantas.containsKey(nombre)) { //verifica si la planta no existe en el diccionario
+			throw new RuntimeException("Planta no registrada");
+		}
+		if(desde.isAfter(hasta)) { 
+			throw new RuntimeException("La fechaDesde no puede ser posterior a la fechaHasta");
+		}
+		
+		int[] histograma = new int[24]; // crea la lista con 24 espacios vacios
+		
+		HashMap<LocalDateTime, Monitoreo> diccionarioInterior = conjuntoMonitoreos.get(nombre); //toma el diccionario de Monitoreos de la planta correspondiente
+		
+		for (LocalDate dia=desde; !dia.isAfter(hasta); dia= dia.plusDays(1)) { //recorre los días desde el comienzo hasta el fin
+			
+			for(int hora=0; hora<24; hora++) { //recorre las 24 horas del día
+				
+				LocalDateTime fechaHora= dia.atTime(hora,0); // convierte el dia(un LocalDate) a LocalDateTime
+				
+				if(diccionarioInterior.containsKey(fechaHora)) { //si el diccionario tiene un monitoreo para esa fechaHora...
+					
+					Monitoreo m= diccionarioInterior.get(fechaHora); //...toma el monitoreo del diccionario...
+					
+					if(m!=null && conjuntoPlantas.get(nombre).cumpleCuota(m)){ //... comprueba si no es null y si el monitoreo cumple la cuota...
+						histograma[hora]++; //... y suma un 1 si ese día se cumplió la cuota en esa hora. 
+					}
+				}
+			}
+		}	
+		return histograma; 
 	}
 
 	@Override
@@ -323,10 +379,37 @@ public class SmartGrids implements ISmartGrids {
 		return null;
 	}
 
+	/*
+     * 9) Devuelve nombres de las plantas que nunca cumplieron la cuota, 
+     * incluso si no tienen monitoreos.
+     */
+	
 	@Override
 	public List<String> plantasQueNuncaCumplieronCuota() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		List<String> lista= new ArrayList<>();
+		
+		for (String nombre:conjuntoPlantas.keySet()) {
+			
+			boolean cumpleAlgunaVez=false; //Acumulador Booleano
+			
+			HashMap<LocalDateTime,Monitoreo> diccionarioInterior= conjuntoMonitoreos.get(nombre); 
+
+			if (diccionarioInterior!=null){
+			
+				for (LocalDateTime fechaHora: diccionarioInterior.keySet()) {
+					
+					Monitoreo m= diccionarioInterior.get(fechaHora);
+					
+					cumpleAlgunaVez= cumpleAlgunaVez || (m!=null || conjuntoPlantas.get(nombre).cumpleCuota(m)); 	
+					}
+				}
+			
+			if(!cumpleAlgunaVez) {
+				lista.add(nombre);
+			}
+		}
+		return lista;
 	}
 
 	@Override

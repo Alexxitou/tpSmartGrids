@@ -12,7 +12,8 @@ public class MonitoreoTermica extends Monitoreo {
         this.combustibleUtilizado = combustibleUtilizado;
     }
 
-  
+    public crearMonitoreoTermica() {
+    }
 
 	public double getCO2generado() {
 		return Co2Generado;

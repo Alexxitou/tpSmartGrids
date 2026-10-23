@@ -318,6 +318,8 @@ public class SmartGrids implements ISmartGrids {
 			throw new RuntimeException("La hora es anterior a la puesta en marcha de la planta.");
 		}
 		//REVISAR EL isBefore, hay algun problema con el tipo de dato
+
+
 		/*
 		comentado porque esto ya lo valida la clase con su irep
 		if (energiaGenerada < 0) {
@@ -330,7 +332,6 @@ public class SmartGrids implements ISmartGrids {
 		 }
 		*/
 		
-
 		HashMap<LocalDateTime, Monitoreo> monitoreosDePlanta = conjuntoMonitoreos.get(nombre);
 
 		Monitoreo monitoreo = new Monitoreo(planta, fecha, energiaGenerada, incidencias);
@@ -408,10 +409,29 @@ public class SmartGrids implements ISmartGrids {
 		monitoreosDePlanta.put(fecha, monitoreo);
 	}
 
+
+	/*
+     * 5) Devuelve la energia total generada, o 0 si no hay monitoreos
+     * 
+     * @throws RuntimeException si la planta no existe
+     */
+
 	@Override
 	public double totalGenerado(String nombre) {
-		// TODO Auto-generated method stub
-		return 0;
+
+		if (!conjuntoPlantas.containsKey(nombre)) {
+			throw new RuntimeException("No existe esa planta");
+		}
+
+		double sumaEnergiaGenerada = 0;
+
+		for (Monitoreo monitoreo: conjuntoMonitoreos.get(nombre).values()) {
+			sumaEnergiaGenerada += monitoreo.getEnergiaGenerada();
+		}
+		
+		return sumaEnergiaGenerada; 
+		//diseño descartado, poner un if para ver si la lista esta vacia, pero ya con el for si no hay simplemente sale y returna 0
+
 	}
 
 	@Override

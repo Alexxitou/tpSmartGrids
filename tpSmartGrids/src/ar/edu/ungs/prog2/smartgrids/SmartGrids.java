@@ -271,10 +271,8 @@ public class SmartGrids implements ISmartGrids {
 		
 		Planta planta= conjuntoPlantas.get(nombre); //obtiene la planta del diccionario
 		
-		planta.activar(); //activa la planta
+		planta.activar(fecha); //activa la planta
 		
-		
-		//Por completar
 		
 	}
 
@@ -285,13 +283,14 @@ public class SmartGrids implements ISmartGrids {
 			throw new RuntimeException("Planta no registrada");
 		}
 		
+		LocalDateTime fecha= LocalDateTime.parse(fechaHora); //convierte el string en LocalDateTime
 
 		Planta planta= conjuntoPlantas.get(nombre); //obtiene la planta del diccionario
 		
-		planta.desactivar(); //desactiva la planta
+		planta.desactivar(fecha); //desactiva la planta
 		
 		
-		//Por completar
+
 
 	}
 

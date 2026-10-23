@@ -314,10 +314,11 @@ public class SmartGrids implements ISmartGrids {
 			throw new RuntimeException("La planta esta inactiva.");
 		}
 
-		if (fecha.isBefore(planta.getFechaHoraPuestaEnFuncionamiento())) {
+
+		// La planta guarda su puesta en marcha como String entonces la paso a LocalDateTime para poder compararla.
+		if (fecha.isBefore(LocalDateTime.parse(planta.getFechaHoraPuestaEnFuncionamiento()))) {
 			throw new RuntimeException("La hora es anterior a la puesta en marcha de la planta.");
 		}
-		//REVISAR EL isBefore, hay algun problema con el tipo de dato
 
 
 		/*
@@ -364,7 +365,7 @@ public class SmartGrids implements ISmartGrids {
 			throw new RuntimeException("La planta esta inactiva.");
 		}
 
-		if (fecha.isBefore(planta.getFechaHoraPuestaEnFuncionamiento())) {
+		if (fecha.isBefore(LocalDateTime.parse(planta.getFechaHoraPuestaEnFuncionamiento()))) {
 			throw new RuntimeException("La hora es anterior a la puesta en marcha de la planta.");
 		}
 
@@ -398,7 +399,7 @@ public class SmartGrids implements ISmartGrids {
 			throw new RuntimeException("La planta esta inactiva.");
 		}
 
-		if (fecha.isBefore(planta.getFechaHoraPuestaEnFuncionamiento())) {
+		if (fecha.isBefore(LocalDateTime.parse(planta.getFechaHoraPuestaEnFuncionamiento()))) {
 			throw new RuntimeException("La hora es anterior a la puesta en marcha de la planta.");
 		}
 
@@ -410,11 +411,6 @@ public class SmartGrids implements ISmartGrids {
 	}
 
 
-	/*
-     * 5) Devuelve la energia total generada, o 0 si no hay monitoreos
-     * 
-     * @throws RuntimeException si la planta no existe
-     */
 
 	@Override
 	public double totalGenerado(String nombre) {
@@ -434,9 +430,15 @@ public class SmartGrids implements ISmartGrids {
 
 	}
 
+
+	/*
+     * 6) Devuelve un arreglo con 24 posiciones con las incidencias acumuladas 
+     *         para cada hora del dia.
+     * 
+     * @throws RuntimeException si la planta no existe
+     */
 	@Override
 	public int[] incidenciasPorHora(String nombre) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

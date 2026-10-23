@@ -10,7 +10,7 @@ public abstract class Planta {
 	protected double capacidadMaxima;
 	protected boolean estadoPlanta;
 	protected String  fechaHoraPuestaEnFuncionamiento;
-	protected HashMap<LocalDateTime, LocalDateTime> registroInactividad;
+	protected HashMap<LocalDateTime, LocalDateTime> registroInactividad; //el primer LocalDateTime registra el inicio, y el segundo, el final.
 	protected LocalDateTime inicioInactividad;
 	
 	
@@ -25,6 +25,17 @@ public abstract class Planta {
 	
 		
 	}
+	public void desactivar(LocalDateTime fecha) {
+		if(estadoPlanta) {
+			registroInactividad.put(fecha, null); //El inicio de la inactividad es la fecha dada, y no hay fin de inactividad de momento.
+			inicioInactividad=fecha;
+			this.estadoPlanta=false;}
+			
+		}
+	
+	
+	
+	
 	public void activar(LocalDateTime fecha) {
 		if(!estadoPlanta) {
 			
@@ -37,14 +48,8 @@ public abstract class Planta {
 			
 			
 		}
-	}
-	public void desactivar(LocalDateTime fecha) {
-		if(estadoPlanta) {
-			registroInactividad.put(fecha, null); //null sirve para detectar la inactividad
-			inicioInactividad=fecha;
-			this.estadoPlanta=false;
-			
-		}
+	
+	
 		
 		
 		
@@ -66,6 +71,9 @@ public abstract class Planta {
 	}
 	public String getFechaHoraPuestaEnFuncionamiento() {
 		return fechaHoraPuestaEnFuncionamiento;
+	}
+	public HashMap<LocalDateTime, LocalDateTime> getRegistroInactividad() {
+		return registroInactividad;
 	}
 	
 	

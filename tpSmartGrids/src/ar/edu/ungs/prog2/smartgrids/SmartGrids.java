@@ -555,11 +555,33 @@ public class SmartGrids implements ISmartGrids {
 		return null;
 	}
 
+	
+	/*
+     * 13. Dado un fecha y hora, se debe devolver los nombres de todas las plantas que estuvieron inactivas en ese momento.
+     * 
+     */
+	
 	@Override
 	public List<String> plantasInactivasEn(String fechaHora) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		List<String> lista = new ArrayList<>();
+		LocalDateTime fecha= LocalDateTime.parse(fechaHora);
+		
+		for(String nombre: conjuntoPlantas.keySet()) { //recorre las plantas
+			
+			Planta planta= conjuntoPlantas.get(nombre);
+				
+			HashMap<LocalDateTime,LocalDateTime> registroInactividad= planta.getRegistroInactividad(); //toma el registro de inactividad de la planta
+			
+			for(LocalDateTime inicio: registroInactividad.keySet()) { //recorre el registro
+				LocalDateTime fin= registroInactividad.get(inicio);
+				
+				if(!fecha.isAfter(inicio)&& (fin==null || fecha.isBefore(fin))){ //verifica que la fecha esté después del inicioInactividad, y antes del finInactividad 
+					lista.add(nombre);  //si fecha está entre ese periodo, agrega el nombre de la planta a la lista, deja de recorrer el registro, y salta a la siguiente planta.
+					break;
+				}
+			}
+		}
+		return lista;
 	}
-
-
 }

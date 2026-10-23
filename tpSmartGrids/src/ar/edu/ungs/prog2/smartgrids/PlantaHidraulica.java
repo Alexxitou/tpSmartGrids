@@ -9,16 +9,21 @@ public class PlantaHidraulica extends PlantaRenovable{
 	
 	public PlantaHidraulica(String nombre, String direccion, double capacidadMaxima, String fechaFuncionamiento, String fuentePrimaria,double eficienciaPromedio,int cantidadTurbinas, double capacidadEmbalse) {
 		super(nombre,direccion,capacidadMaxima,fechaFuncionamiento,fuentePrimaria,eficienciaPromedio);
+		if(cantidadTurbinas<0) {
+        	throw new RuntimeException("CantidadTurbinas no puede ser menor a cero");
+        }
+		if(capacidadEmbalse<0) {
+			throw new RuntimeException("CapacidadEmbalse no puede ser menor a cero");
+		}
+        
+		
 		this.cantidadTurbinas=cantidadTurbinas;
 		this.capacidadEmbalse=capacidadEmbalse;
 	}
 
-	/*@Override
-	public boolean cumpleCuota() {
-		// TODO Auto-generated method stub
-		return false;
-	}*/
-
+	
+	
+	
 	@Override
 	public double capacidadMinimaCuota() {
 		return capacidadMaxima * (eficienciaPromedio/100);

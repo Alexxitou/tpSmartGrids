@@ -8,13 +8,20 @@ public class MonitoreoTermica extends Monitoreo {
 
     public MonitoreoTermica(Planta planta, LocalDateTime fechaHora, double energiaGenerada, int cantidadIncidencias, double Co2Generado, double combustibleUtilizado) {
         super(planta, fechaHora, energiaGenerada, cantidadIncidencias);
+        if(Co2Generado<0) {
+        	throw new RuntimeException("Co2Generado no puede ser menor a cero");
+        }
+        if(combustibleUtilizado<0) {
+        	throw new RuntimeException("combustibleUtilizado no puede ser menor a cero");
+        }
+        
         this.Co2Generado = Co2Generado;
         this.combustibleUtilizado = combustibleUtilizado;
     }
 
-    public crearMonitoreoTermica() {
-    }
-
+    
+    
+    
 	public double getCO2generado() {
 		return Co2Generado;
 	}

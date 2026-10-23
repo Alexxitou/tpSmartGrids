@@ -7,6 +7,10 @@ public class MonitoreoEolica extends Monitoreo {
     public MonitoreoEolica (Planta planta, LocalDateTime fechaHora, double energiaGenerada, int cantidadIncidencias, double velVientoPromedio) {
 
         super(planta, fechaHora, energiaGenerada, cantidadIncidencias);
+        if(velVientoPromedio<0) {
+        	throw new RuntimeException("velVientoPromedio no puede ser menor a cero");
+        }
+        
         this.velVientoPromedio = velVientoPromedio;
         
     }

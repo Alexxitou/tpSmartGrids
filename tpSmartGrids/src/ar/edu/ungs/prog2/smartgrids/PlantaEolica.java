@@ -10,6 +10,16 @@ public class PlantaEolica extends PlantaRenovable {
 
     public PlantaEolica(String nombre, String direccion, double capacidadMaxima, String fechaHoraPuestaEnFuncionamiento, String fuentePrimaria,double eficienciaPromedio, double cantidadAerogeneradores, double alturaTorres, double velocidadMinimaViento) {
         super(nombre,direccion,capacidadMaxima,fechaHoraPuestaEnFuncionamiento,fuentePrimaria,eficienciaPromedio);
+        if(cantidadAerogeneradores<0) {
+        	throw new RuntimeException("CantidadAerogeneradores no puede ser menor a cero");
+        }
+        if(alturaTorres<0) {
+        	throw new RuntimeException("AlturaTorre no puede ser menor a cero");
+        }
+        if(velocidadMinimaViento<0) {
+        	throw new RuntimeException("velocidadMinimaViento no puede ser menor a cero");
+        }
+        
         this.cantidadAerogeneradores = cantidadAerogeneradores;
         this.alturaTorres = alturaTorres;
         this.velocidadMinimaViento = velocidadMinimaViento;

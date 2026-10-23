@@ -365,6 +365,14 @@ public class SmartGrids implements ISmartGrids {
 	
 	@Override
 	public int[] histogramaCumplimiento(String nombre, String fechaDesde, String fechaHasta) {
+		
+		if(nombre==null) { 
+			throw new RuntimeException("el nombre no puede ser null");
+		}
+		
+		if(fechaDesde==null || fechaHasta==null) {
+			throw new RuntimeException("Las fechas no pueden ser null");
+		}
 
 		LocalDate desde = LocalDate.parse(fechaDesde); //convierte el string en LocalDate
 	    

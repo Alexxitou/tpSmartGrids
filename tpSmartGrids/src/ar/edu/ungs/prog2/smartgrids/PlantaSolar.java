@@ -12,7 +12,16 @@ public class PlantaSolar extends PlantaRenovable {
 				double superficieCubierta, int cantidadPaneles, double horasRadiacionDiaria) {
 		
 		super(nombre,direccion,capacidadMaxima,fechaHoraPuestaEnFuncionamiento,fuentePrimaria,eficienciaPromedio);
-        this.superficieCubierta = superficieCubierta;
+        if(superficieCubierta<0) {
+        	throw new RuntimeException("superfieCubierta no puede ser menor a cero");
+        }
+        if(cantidadPaneles<0) {
+        	throw new RuntimeException("CantidadPaneles no puede ser menor a cero");
+        }
+        if(horasRadiacionDiaria<0||horasRadiacionDiaria>24) {
+        	throw new RuntimeException("las horas de radiación deben ser entre 0 y 23 incluidos.");
+        }
+		this.superficieCubierta = superficieCubierta;
         this.cantidadPaneles = cantidadPaneles;
         this.horasRadiacionDiaria = horasRadiacionDiaria;
 	}

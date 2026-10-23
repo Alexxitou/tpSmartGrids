@@ -9,6 +9,18 @@ public class PlantaTermica extends Planta{
 	
 	public PlantaTermica(String nombre, String direccion, double capacidadMaxima, String fechaHoraPuestaEnFuncionamiento, String tipoCombustible, double objetivoEmisionesCo2PorHora, double capacidadAlmacenamientoCombustible) {
 		super(nombre,direccion,capacidadMaxima,fechaHoraPuestaEnFuncionamiento);
+		if(tipoCombustible==null || tipoCombustible=="") {
+        	throw new RuntimeException("tipoCombustible no válido");
+        }
+		if(objetivoEmisionesCo2PorHora<0) {
+			throw new RuntimeException("objetivoEmisionesCo2PorHora no válido");
+		}
+		if(capacidadAlmacenamientoCombustible<0) {
+			throw new RuntimeException("capacidadAlmacenamientoCombustible no válido");
+		}
+        
+		
+		
 		this.tipoCombustible=tipoCombustible;
 		this.objetivoEmisionesCo2PorHora=objetivoEmisionesCo2PorHora;
 		this.capacidadAlmacenamientoCombustible=capacidadAlmacenamientoCombustible;

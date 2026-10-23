@@ -15,15 +15,24 @@ public abstract class Planta {
 	
 	
 	public Planta(String nombre, String direccion, double capacidadMaxima, String fechaHoraPuestaEnFuncionamiento) {
+		if(nombre== null|| nombre =="") {
+			throw new RuntimeException("Nombre no válido");
+		}
+		if (direccion == null || direccion.isBlank()) {
+	        throw new RuntimeException("Dirección no válida");
+	    }
+		if (capacidadMaxima <= 0) {
+	        throw new RuntimeException("Capacidad máxima no válida");
+	    }
+		if (fechaHoraPuestaEnFuncionamiento == null) {
+	        throw new RuntimeException("Fecha no válida");
+	    }
 		this.nombre=nombre;
 		this.direccion=direccion;
 		this.capacidadMaxima=capacidadMaxima;
 		this.estadoPlanta= true;
 		this.fechaHoraPuestaEnFuncionamiento=fechaHoraPuestaEnFuncionamiento;
-		
-		
-	
-		
+
 	}
 	public void desactivar(LocalDateTime inicioDeInactividad) {
 		if(estadoPlanta) {

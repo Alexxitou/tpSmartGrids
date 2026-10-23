@@ -171,7 +171,7 @@ public interface ISmartGrids {
     List<String> plantasOrdenadasPorEnergiaGenerada();
 
     /*
-     * 13) Devuelve los nombres de las plantas inactivas en la fecha y hora indicada.
+     * 13. Dado un fecha y hora, se debe devolver los nombres de todas las plantas que estuvieron inactivas en ese momento.
      * 
      */
     List<String> plantasInactivasEn(String fechaHora);

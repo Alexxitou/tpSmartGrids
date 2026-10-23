@@ -25,10 +25,10 @@ public abstract class Planta {
 	
 		
 	}
-	public void desactivar(LocalDateTime fecha) {
+	public void desactivar(LocalDateTime inicioDeInactividad) {
 		if(estadoPlanta) {
-			registroInactividad.put(fecha, null); //El inicio de la inactividad es la fecha dada, y no hay fin de inactividad de momento.
-			inicioInactividad=fecha;
+			registroInactividad.put(inicioDeInactividad, null); //El inicio de la inactividad es la fecha dada, y no hay fin de inactividad de momento.
+			inicioInactividad=inicioDeInactividad;
 			this.estadoPlanta=false;}
 			
 		}
@@ -36,12 +36,12 @@ public abstract class Planta {
 	
 	
 	
-	public void activar(LocalDateTime fecha) {
+	public void activar(LocalDateTime finDeInactividad) {
 		if(!estadoPlanta) {
 			
 			if(inicioInactividad!=null) {
 				
-				registroInactividad.put(inicioInactividad,fecha); //registra el inicio de inactividad(si ya estaba inactiva antes), y la fecha en la que se activa
+				registroInactividad.put(inicioInactividad,finDeInactividad); //registra el inicio de inactividad(si ya estaba inactiva antes), y la fecha en la que se activa
 				inicioInactividad=null; //inicioInactividad se convierte en null porque ya no hay inactividad
 			}
 			this.estadoPlanta=true;

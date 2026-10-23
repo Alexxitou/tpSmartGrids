@@ -17,107 +17,10 @@ public class SmartGrids implements ISmartGrids {
 
 	public SmartGrids() {
 		conjuntoPlantas = new HashMap<>();
-		conjuntoMonitoreos= new HashMap<>();
-		
-		
-		
+		conjuntoMonitoreos= new HashMap<>();	
 	}
 	
-	/* IGNORAR
-	public void registrarPlanta(Planta planta) {
-		String nombrePlanta= planta.getNombre(); //Toma el nombre de la planta
-		
-		
-		if (conjuntoPlantas.containsKey(nombrePlanta)) { // para que no se registren nuevas plantas con el mismo nombre.
-	        throw new IllegalArgumentException("Ya existe una planta con ese nombre");
-	    }
-	    
-		conjuntoPlantas.put(nombrePlanta, planta); //agrega la planta al HashMap con el nombre de la planta como Clave.	
-	    	
-		
-	    conjuntoMonitoreos.put(nombrePlanta, new HashMap<>());	//agrega al diccionario de Monitoreos el nombre de la planta y un diccionario vacío para meter sus monitoreos.
-		
-		
-		
-	}
-	
-	public void registrarMonitoreo(Monitoreo monitoreo) { 
-		
-		
-		Planta planta= monitoreo.getPlanta(); //Toma la planta del monitoreo
-		
-		String nombrePlanta= planta.getNombre(); //toma el nombre de la planta obtenida del codigo de arriba
-		
-		if (!conjuntoPlantas.containsKey(nombrePlanta)) { //comprueba si la planta está registrada en el conjuntoPlantas
-            throw new IllegalArgumentException("La planta no está registrada");
-        }
-		
-		
-		
-		
-		HashMap<LocalDateTime, Monitoreo> monitoreosDePlanta = //toma el diccionario vacío de la planta
-		        conjuntoMonitoreos.get(nombrePlanta);
-		
-		LocalDateTime fechaHora= monitoreo.getFechaHora(); //toma la fecha y hora del monitoreo
-		
-		if(!planta.estaActiva()) { //comprueba si la planta no está activa, y en ese caso, se registra la fecha, pero no se registra un monitoreo.
-			monitoreosDePlanta.put(fechaHora, null);
-		} else {
-			monitoreosDePlanta.put(fechaHora, monitoreo); //registra el monitoreo en el diccionario vacío junto a su Fecha y Hora
-		}
-		
-		
-		
-		
 
-
-	}
-	public void consultarPlanta(Planta planta) {
-		System.out.println(planta.mostrarInfo());
-	}
-	
-	
-	
-	public void cambiarEstadoPlanta(String nombrePlanta) {
-		if(!conjuntoPlantas.containsKey(nombrePlanta)) { //verifica si la planta no está registrada
-			throw new IllegalArgumentException("Planta no registrada");
-		} 
-		Planta planta = conjuntoPlantas.get(nombrePlanta); //toma la planta del conjuntoPlantas
-		if (planta.estaActiva()){
-			planta.desactivar();
-		} else {
-			planta.activar();
-		}
-		
-	}
-	
-	
-	
-
-	public int cantidadMonitoreos(String nombrePlanta) {
-	    // Busca el diccionario de monitoreos de la planta.
-	    HashMap<LocalDateTime, Monitoreo> monitoreos =
-	        conjuntoMonitoreos.get(nombrePlanta);
-
-	    // Si no existe esa planta, informa el error.
-	    if (monitoreos == null) {
-	        throw new IllegalArgumentException("Planta no registrada");
-	    }
-
-	    // Devuelve cuántos monitoreos tiene guardados.
-	    return monitoreos.size();
-	}
-
-	
-	*/
-	
-	
-	
-	
-	
-	
-	
-	
 	
     /*
      * 1.a) Registran una planta con sus datos y caracteristicas  ✅
@@ -461,12 +364,13 @@ public class SmartGrids implements ISmartGrids {
      */
 	
 	@Override
-	public int[] histogramaCumplimiento(String nombre, String fechaDesde, String fechaHasta) { //POR COMPLETAR	
+	public int[] histogramaCumplimiento(String nombre, String fechaDesde, String fechaHasta) {
 
-		LocalDate desde= LocalDate.parse(fechaDesde); //convierte el string en LocalDate
-		LocalDate hasta= LocalDate.parse(fechaHasta); //convierte el string en LocalDate
+		LocalDate desde = LocalDate.parse(fechaDesde); //convierte el string en LocalDate
+	    
+	    LocalDate hasta = LocalDate.parse(fechaHasta); //convierte el string en LocalDate
 
-
+	    int[] histograma = new int[24]; // crea la lista con 24 espacios vacios
 		
 		if(!conjuntoPlantas.containsKey(nombre)) { //verifica si la planta no existe en el diccionario
 			throw new RuntimeException("Planta no registrada");
@@ -475,24 +379,26 @@ public class SmartGrids implements ISmartGrids {
 			throw new RuntimeException("La fechaDesde no puede ser posterior a la fechaHasta");
 		}
 		
-		int[] histograma = new int[24]; // crea la lista con 24 espacios vacios
 		
 		HashMap<LocalDateTime, Monitoreo> diccionarioInterior = conjuntoMonitoreos.get(nombre); //toma el diccionario de Monitoreos de la planta correspondiente
+		
+		if(diccionarioInterior==null) {//si el diccionario está vacío, simplemente devuelve el arreglo con los 24 espacios vacios.
+			return histograma;
+		}
+		
+		Planta planta= conjuntoPlantas.get(nombre);
 		
 		for (LocalDate dia=desde; !dia.isAfter(hasta); dia= dia.plusDays(1)) { //recorre los días desde el comienzo hasta el fin
 			
 			for(int hora=0; hora<24; hora++) { //recorre las 24 horas del día
 				
-				LocalDateTime fechaHora= dia.atTime(hora,0); // convierte el dia(un LocalDate) a LocalDateTime
-				
-				if(diccionarioInterior.containsKey(fechaHora)) { //si el diccionario tiene un monitoreo para esa fechaHora...
+				LocalDateTime diaYHora= dia.atTime(hora,0); //convierte el día(localDate) a LocalDateTime
 					
-					Monitoreo m= diccionarioInterior.get(fechaHora); //...toma el monitoreo del diccionario...
+					Monitoreo m= diccionarioInterior.get(diaYHora); //...toma el monitoreo del diccionario...
 					
-					if(m!=null && conjuntoPlantas.get(nombre).cumpleCuota(m)){ //... comprueba si no es null y si el monitoreo cumple la cuota...
+					if(m!=null && planta.cumpleCuota(m)){ //... comprueba si no es null y si el monitoreo cumple la cuota...
 						histograma[hora]++; //... y suma un 1 si ese día se cumplió la cuota en esa hora. 
 					}
-				}
 			}
 		}	
 		return histograma; 
@@ -514,23 +420,23 @@ public class SmartGrids implements ISmartGrids {
 		
 		List<String> lista= new ArrayList<>();
 		
-		for (String nombre:conjuntoPlantas.keySet()) {
+		for (String nombre:conjuntoPlantas.keySet()) { //recorre las plantas
 			
 			boolean cumpleAlgunaVez=false; //Acumulador Booleano
 			
-			HashMap<LocalDateTime,Monitoreo> diccionarioInterior= conjuntoMonitoreos.get(nombre); 
+			HashMap<LocalDateTime,Monitoreo> diccionarioInterior= conjuntoMonitoreos.get(nombre); //toma el diccionario interior de conjuntoMonitoreos
 
-			if (diccionarioInterior!=null){
+			if (diccionarioInterior!=null){ //verifica que no esté vacio
 			
-				for (LocalDateTime fechaHora: diccionarioInterior.keySet()) {
+				for (LocalDateTime fechaHora: diccionarioInterior.keySet()) {//recorre el diccionario interior
 					
-					Monitoreo m= diccionarioInterior.get(fechaHora);
+					Monitoreo m= diccionarioInterior.get(fechaHora);//toma el monitoreo del diccionario interior
 					
-					cumpleAlgunaVez= cumpleAlgunaVez || (m!=null || conjuntoPlantas.get(nombre).cumpleCuota(m)); 	
+					cumpleAlgunaVez= cumpleAlgunaVez || (m!=null || conjuntoPlantas.get(nombre).cumpleCuota(m));//verifica si la cuota se cumple alguna vez. en ese caso, cumpleAlgunaVez se vuelve true 	
 					}
 				}
 			
-			if(!cumpleAlgunaVez) {
+			if(!cumpleAlgunaVez) { //si la cuota no se cumple, se añade el nombre de la planta a la lista.
 				lista.add(nombre);
 			}
 		}

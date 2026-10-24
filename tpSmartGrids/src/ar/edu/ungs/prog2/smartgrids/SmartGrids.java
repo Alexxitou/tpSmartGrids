@@ -209,119 +209,35 @@ public class SmartGrids implements ISmartGrids {
 
 	@Override
 	public void registrarMonitoreo(String nombre, String fechaHora, double energiaGenerada, int incidencias) {
-		
-		if (fechaHora == null) {
-			throw new RuntimeException("La hora no puede ser nula");
-		}
-		LocalDateTime fecha = LocalDateTime.parse(fechaHora);
+	    LocalDateTime fecha = parsearFecha(fechaHora);
+	    Planta planta = obtenerPlantaParaMonitoreo(nombre, fecha);
 
-		if (!conjuntoPlantas.containsKey(nombre)) {
-			throw new RuntimeException("No existe esa planta");
-		}
-
-		Planta planta = conjuntoPlantas.get(nombre);
-
-		if (!planta.estaActiva()) {
-			throw new RuntimeException("La planta esta inactiva.");
-		}
-
-
-		// La planta guarda su puesta en marcha como String entonces la paso a LocalDateTime para poder compararla.
-		if (fecha.isBefore(LocalDateTime.parse(planta.getFechaHoraPuestaEnFuncionamiento()))) {
-			throw new RuntimeException("La hora es anterior a la puesta en marcha de la planta.");
-		}
-
-
-		/*
-		comentado porque esto ya lo valida la clase con su irep
-		if (energiaGenerada < 0) {
-			throw new RuntimeException("La energia generada no debe ser menor que 0.");
-		}
-
-		if (incidencias < 0)
-		 {
-			throw new RuntimeException("Las incidencias no deben ser menor que 0.");
-		 }
-		*/
-		
-		HashMap<LocalDateTime, Monitoreo> monitoreosDePlanta = conjuntoMonitoreos.get(nombre);
-
-		Monitoreo monitoreo = new Monitoreo(planta, fecha, energiaGenerada, incidencias);
-
-		monitoreosDePlanta.put(fecha, monitoreo); // IMPORTANTE!! CON ESTO ANADO AL DICCIONARIO INTERIOR
-	}
-		//armando el codigo, pienso que no haria falta que tenga como atributo el objeto planta, si ya lo busca por diccionario, podria sacarse o ponerle algun nombre al monitoreo	
-
-
-	@Override
-	public void registrarMonitoreo(String nombre, String fechaHora, double energiaGenerada, int incidencias,
-			double velocidadViento) {
-
-		if (fechaHora == null) {
-			throw new RuntimeException("La hora no puede ser nula");
-		}
-		LocalDateTime fecha = LocalDateTime.parse(fechaHora);
-
-		if (!conjuntoPlantas.containsKey(nombre)) {
-			throw new RuntimeException("No existe esa planta");
-		}
-
-		Planta planta = conjuntoPlantas.get(nombre);
-
-		if (!(planta instanceof PlantaEolica)) {
-			throw new RuntimeException("La planta no es eolica.");
-		}
-
-		if (!planta.estaActiva()) {
-			throw new RuntimeException("La planta esta inactiva.");
-		}
-
-		if (fecha.isBefore(LocalDateTime.parse(planta.getFechaHoraPuestaEnFuncionamiento()))) {
-			throw new RuntimeException("La hora es anterior a la puesta en marcha de la planta.");
-		}
-
-		HashMap<LocalDateTime, Monitoreo> monitoreosDePlanta = conjuntoMonitoreos.get(nombre);
-
-		Monitoreo monitoreo = new MonitoreoEolica(planta, fecha, energiaGenerada, incidencias, velocidadViento);
-
-		monitoreosDePlanta.put(fecha, monitoreo);
+	    guardarMonitoreo(nombre, fecha, new Monitoreo(planta, fecha, energiaGenerada, incidencias));
 	}
 
 	@Override
 	public void registrarMonitoreo(String nombre, String fechaHora, double energiaGenerada, int incidencias,
-			double co2Emitido, double combustibleUtilizado) {
+	        double velocidadViento) {
+	    LocalDateTime fecha = parsearFecha(fechaHora);
+	    Planta planta = obtenerPlantaParaMonitoreo(nombre, fecha);
 
-		if (fechaHora == null) {
-			throw new RuntimeException("La hora no puede ser nula");
-		}
-		LocalDateTime fecha = LocalDateTime.parse(fechaHora);
-
-		if (!conjuntoPlantas.containsKey(nombre)) {
-			throw new RuntimeException("No existe esa planta");
-		}
-
-		Planta planta = conjuntoPlantas.get(nombre);
-
-		if (!(planta instanceof PlantaTermica)) {
-			throw new RuntimeException("La planta no es termica.");
-		}
-
-		if (!planta.estaActiva()) {
-			throw new RuntimeException("La planta esta inactiva.");
-		}
-
-		if (fecha.isBefore(LocalDateTime.parse(planta.getFechaHoraPuestaEnFuncionamiento()))) {
-			throw new RuntimeException("La hora es anterior a la puesta en marcha de la planta.");
-		}
-
-		HashMap<LocalDateTime, Monitoreo> monitoreosDePlanta = conjuntoMonitoreos.get(nombre);
-
-		Monitoreo monitoreo = new MonitoreoTermica(planta, fecha, energiaGenerada, incidencias, co2Emitido, combustibleUtilizado);
-
-		monitoreosDePlanta.put(fecha, monitoreo);
+	    if (!(planta instanceof PlantaEolica)) {
+	        throw new RuntimeException("La planta no es eolica.");
+	    }
+	    guardarMonitoreo(nombre, fecha, new MonitoreoEolica(planta, fecha, energiaGenerada, incidencias, velocidadViento));
 	}
 
+	@Override
+	public void registrarMonitoreo(String nombre, String fechaHora, double energiaGenerada, int incidencias,
+	        double co2Emitido, double combustibleUtilizado) {
+	    LocalDateTime fecha = parsearFecha(fechaHora);
+	    Planta planta = obtenerPlantaParaMonitoreo(nombre, fecha);
 
+	    if (!(planta instanceof PlantaTermica)) {
+	        throw new RuntimeException("La planta no es termica.");
+	    }
+	    guardarMonitoreo(nombre, fecha, new MonitoreoTermica(planta, fecha, energiaGenerada, incidencias, co2Emitido, combustibleUtilizado));
+	}
 
 	@Override
 	public double totalGenerado(String nombre) {
@@ -664,7 +580,46 @@ public class SmartGrids implements ISmartGrids {
 		return lista;
 	}
 	
-	//Para imprimir SmartGrids
+	
+	//devuelve la planta o lanza excepción si no existe
+	private Planta obtenerPlanta(String nombre) {
+	    if (!conjuntoPlantas.containsKey(nombre)) {
+	        throw new RuntimeException("No existe esa planta");
+	    }
+	    return conjuntoPlantas.get(nombre);
+	}
+
+	//chequea que no sea null y convierte el String a LocalDateTime
+	private LocalDateTime parsearFecha(String fechaHora) {
+	    if (fechaHora == null) {
+	        throw new RuntimeException("La hora no puede ser nula");
+	    }
+	    return LocalDateTime.parse(fechaHora);
+	}
+
+	//devuelve la planta si puede recibir un monitoreo en esa fecha: existe, está activa y no es anterior a la puesta en marcha
+	private Planta obtenerPlantaParaMonitoreo(String nombre, LocalDateTime fecha) {
+	    Planta planta = obtenerPlanta(nombre);
+
+	    if (!planta.estaActiva()) {
+	        throw new RuntimeException("La planta esta inactiva.");
+	    }
+	    if (fecha.isBefore(LocalDateTime.parse(planta.getFechaHoraPuestaEnFuncionamiento()))) {
+	        throw new RuntimeException("La hora es anterior a la puesta en marcha de la planta.");
+	    }
+	    return planta;
+	}
+
+	//rechaza el duplicado y guarda el monitoreo en el diccionario de la planta
+	private void guardarMonitoreo(String nombre, LocalDateTime fecha, Monitoreo monitoreo) {
+	    HashMap<LocalDateTime, Monitoreo> monitoreosDePlanta = conjuntoMonitoreos.get(nombre);
+
+	    if (monitoreosDePlanta.containsKey(fecha)) {
+	        throw new RuntimeException("Ya hay un monitoreo para esa hora.");
+	    }
+	    monitoreosDePlanta.put(fecha, monitoreo);
+	}
+	//para imprimir SmartGrids
 	@Override
 	public String toString() {
 		StringBuilder sb= new StringBuilder();

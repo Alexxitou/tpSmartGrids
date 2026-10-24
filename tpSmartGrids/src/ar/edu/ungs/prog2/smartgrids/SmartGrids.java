@@ -178,7 +178,7 @@ public class SmartGrids implements ISmartGrids {
 		
 		Planta planta= conjuntoPlantas.get(nombre); //obtiene la planta del diccionario
 		
-		planta.activar(fecha); //activa la planta
+		planta.activar(fecha); //activa la planta. Toma la fecha como parámetro para el registro de Inactividad.
 		
 		
 	}
@@ -194,7 +194,7 @@ public class SmartGrids implements ISmartGrids {
 
 		Planta planta= conjuntoPlantas.get(nombre); //obtiene la planta del diccionario
 		
-		planta.desactivar(fecha); //desactiva la planta
+		planta.desactivar(fecha); //desactiva la planta. Toma la fecha como parámetro para el registro de Inactividad.
 		
 		
 
@@ -232,18 +232,6 @@ public class SmartGrids implements ISmartGrids {
 			throw new RuntimeException("La hora es anterior a la puesta en marcha de la planta.");
 		}
 
-
-		/*
-		comentado porque esto ya lo valida la clase con su irep
-		if (energiaGenerada < 0) {
-			throw new RuntimeException("La energia generada no debe ser menor que 0.");
-		}
-
-		if (incidencias < 0)
-		 {
-			throw new RuntimeException("Las incidencias no deben ser menor que 0.");
-		 }
-		*/
 		
 		HashMap<LocalDateTime, Monitoreo> monitoreosDePlanta = conjuntoMonitoreos.get(nombre);
 
@@ -351,9 +339,34 @@ public class SmartGrids implements ISmartGrids {
      */
 	@Override
 	public int[] incidenciasPorHora(String nombre) {
-		return null;
-	}
 
+	    if (!conjuntoPlantas.containsKey(nombre)) {//Verifica si la planta existe en el diccionario
+	        throw new RuntimeException("La planta no existe");
+	    }
+
+	    int[] resultado = new int[24]; //crea un arreglo con 24 espacios vacíos.
+
+
+	    HashMap<LocalDateTime, Monitoreo> diccionarioInterior= conjuntoMonitoreos.get(nombre); //Toma el diccionario Interior de conjuntoMonitoreos
+
+
+	    if (diccionarioInterior == null) {// Si todavía no tiene monitoreos, devuelve los 24 ceros.
+	        return resultado;
+	    }
+
+	    for (LocalDateTime fechaHora : diccionarioInterior.keySet()) {//recorre el diccionario interior.
+
+	        Monitoreo monitoreo = diccionarioInterior.get(fechaHora); //toma el monitoreo del diccionario interior
+
+	        if (monitoreo != null) {// Ignora las horas que no tienen monitoreo.
+
+	            int hora = fechaHora.getHour();// Obtiene la hora del día
+
+	            resultado[hora] += monitoreo.getCantidadIncidencias(); // Acumula las incidencias en la posición correspondiente.
+	        }
+	    }
+	    return resultado;
+	}
 	/*
      * 7) Cuenta, para cada hora del dia, en cuantos dias se cumplio la cuota
      * entre las fechas indicadas, incluidas ambas.

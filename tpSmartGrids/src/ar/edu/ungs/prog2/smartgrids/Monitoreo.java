@@ -32,8 +32,6 @@ public class Monitoreo {
 	}
 
 
-
-    //revisar si este get se usa, sino sacarlo
 	public LocalDateTime getFechaHora() {
 		return fechaHora;
 	}

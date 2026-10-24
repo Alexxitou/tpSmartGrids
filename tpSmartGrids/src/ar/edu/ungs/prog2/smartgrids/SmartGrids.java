@@ -476,8 +476,57 @@ public class SmartGrids implements ISmartGrids {
 
 	@Override
 	public List<String> plantasOrdenadasPorEnergiaGenerada() {
-		// TODO Auto-generated method stub
-		return null;
+
+	    HashMap<String, Double> totales = new HashMap<>();// guarda el total de energía generada por cada planta
+
+	    for (String nombre : conjuntoPlantas.keySet()) {//recorre las plantas
+
+	        HashMap<LocalDateTime, Monitoreo> diccionarioInterior= conjuntoMonitoreos.get(nombre); //obtiene el diccionario interior
+
+	        double totalGenerado = 0;
+
+	        if (diccionarioInterior != null) {//verifica si la planta tiene monitoreos registrados
+
+	            for (LocalDateTime fechaHora : diccionarioInterior.keySet()) { //recorre el diccionario interior
+
+	                Monitoreo monitoreo = diccionarioInterior.get(fechaHora);
+
+	                if (monitoreo != null) {
+	                    totalGenerado += monitoreo.getEnergiaGenerada();//suma la energía generada al totalGenerado de esa planta
+	                }
+	            }
+	        }
+	        totales.put(nombre, totalGenerado); //se guarda el total calculado en el HashMap
+	    }
+
+
+	    List<String> nombres = new ArrayList<>();//se crea una lista con los nombres de las plantas.
+
+	    for (String nombre : conjuntoPlantas.keySet()) {//recorre las plantas y las añade a la lista
+	        nombres.add(nombre);
+	    }
+
+	    // Ordenamos de mayor a menor energía generada.
+	    // Si dos plantas empatan, las ordenamos alfabéticamente.
+	    nombres.sort((nombre1, nombre2) -> {
+	        int comparacion = Double.compare(totales.get(nombre2),totales.get(nombre1));
+
+	        if (comparacion == 0) {
+	            return nombre1.compareTo(nombre2);
+	        	}
+
+	        return comparacion;
+	    });
+	    
+
+	    // Construimos la lista con el formato solicitado.
+	    List<String> resultado = new ArrayList<>();
+
+	    for (String nombre : nombres) {
+	        resultado.add(nombre + ": " + totales.get(nombre));
+	    }
+
+	    return resultado;
 	}
 
 	

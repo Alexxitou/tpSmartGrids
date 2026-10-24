@@ -19,13 +19,7 @@ public abstract class PlantaRenovable extends Planta {
 		this.eficienciaPromedio=eficienciaPromedio;
 	}
 	
-	
-	
-	public abstract boolean esRenovable();
-	
-	public abstract String getFuentePrimaria();
-	
-	public abstract double capacidadMinimaCuota();
+
 	
 	@Override
 	public String toString() {

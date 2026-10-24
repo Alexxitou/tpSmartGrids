@@ -68,10 +68,12 @@ public abstract class Planta {
 	public abstract boolean cumpleCuota(Monitoreo monitoreo);
 	
 	public abstract double capacidadMinimaCuota();
-
+	
 	public abstract boolean esRenovable();
 	
 	public abstract String getFuentePrimaria();
+
+	
 	
 	public String getNombre() {
 		return nombre;		

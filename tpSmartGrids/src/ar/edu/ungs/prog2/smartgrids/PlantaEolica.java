@@ -1,7 +1,6 @@
 package ar.edu.ungs.prog2.smartgrids;
 
 
-
 public class PlantaEolica extends PlantaRenovable {
 
     private double cantidadAerogeneradores;
@@ -61,5 +60,10 @@ public class PlantaEolica extends PlantaRenovable {
 	public String getFuentePrimaria() {
 		return fuentePrimaria;
 	}
+
+
+    public double getVelocidadMinimaViento() {
+		return velocidadMinimaViento;
+    }
 
 }

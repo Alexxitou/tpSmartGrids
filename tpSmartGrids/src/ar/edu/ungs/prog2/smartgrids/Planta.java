@@ -18,21 +18,22 @@ public abstract class Planta {
 		if(nombre== null|| nombre =="") {
 			throw new RuntimeException("Nombre no válido");
 		}
-		if (direccion == null || direccion.isBlank()) {
+		if (direccion == null || direccion=="") {
 	        throw new RuntimeException("Dirección no válida");
 	    }
 		if (capacidadMaxima <= 0) {
 	        throw new RuntimeException("Capacidad máxima no válida");
 	    }
 		if (fechaHoraPuestaEnFuncionamiento == null) {
-	        throw new RuntimeException("Fecha no válida");
-	    }
+			throw new RuntimeException("Fecha no válida");
+		}
+		
 		this.nombre=nombre;
 		this.direccion=direccion;
 		this.capacidadMaxima=capacidadMaxima;
 		this.estadoPlanta= true;
 		this.fechaHoraPuestaEnFuncionamiento=fechaHoraPuestaEnFuncionamiento;
-
+		this.registroInactividad = new HashMap<>();
 	}
 	public void desactivar(LocalDateTime inicioDeInactividad) {
 		if(estadoPlanta) {

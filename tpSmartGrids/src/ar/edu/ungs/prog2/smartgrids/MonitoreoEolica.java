@@ -23,4 +23,8 @@ public class MonitoreoEolica extends Monitoreo {
     
     return st.toString();
     }
+
+    public double getVelVientoPromedio() {
+        return velVientoPromedio;    
+    }
 }

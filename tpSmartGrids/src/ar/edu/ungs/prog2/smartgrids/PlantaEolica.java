@@ -62,4 +62,9 @@ public class PlantaEolica extends PlantaRenovable {
 		return fuentePrimaria;
 	}
 
+
+    public double getVelocidadMinimaViento() {
+		return velocidadMinimaViento;
+    }
+
 }

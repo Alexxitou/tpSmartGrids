@@ -462,10 +462,79 @@ public class SmartGrids implements ISmartGrids {
 		return lista;
 	}
 
+
+
+
+	/*
+     * 10) Devuelve para cada planta eolica, las horas (de 0 a 23) con 
+     * registros en las que nunca se alcanzo la velocidad minima del viento.
+     * Se debe respetar el siguiente formato:
+     * """
+     * Plantas Eolicas: Horas con poco viento
+     * - Planta 1:  5 m/s
+     *        07: 2 m/s
+     *        11: 3 m/s
+     *        12: 1 m/s
+     *        13: 0 m/s  
+     * - Mi Super Planta:  4 m/s
+     *        07: 2 m/s
+     *        11: 3 m/s
+     * """
+     */
 	@Override
 	public String horasSinVelocidadMinimaPorPlantaEolica() {
-		// TODO Auto-generated method stub
-		return null;
+
+		StringBuilder texto = new StringBuilder("Plantas Eolicas: Horas con poco viento\n");
+
+		for (Planta planta : conjuntoPlantas.values()) {
+
+			// si no es eolica la salteo y paso a la siguiente
+			if (!(planta instanceof PlantaEolica)) {
+				continue;
+			}
+
+			PlantaEolica eolica = (PlantaEolica) planta;//poruqe lleva parentesis?
+			double minima = eolica.getVelocidadMinimaViento();
+
+			//el valor es el viento más alto de esa hora, un hashmap x planta
+			//si la hora no tiene registros directamente no está como clave
+			HashMap<Integer, Double> vientoMaximo = new HashMap<>();
+
+			//recorro los monitoreos de esta planta 
+			for (Monitoreo m : conjuntoMonitoreos.get(planta.getNombre()).values()) {
+
+				if (m instanceof MonitoreoEolica) {
+
+
+					int hora = m.getFechaHora().getHour();
+					double viento = ((MonitoreoEolica) m).getVelVientoPromedio();  
+
+					//si la hora no existe o este viento supera al guardado, actualizo el máximo
+					if (!vientoMaximo.containsKey(hora) || viento > vientoMaximo.get(hora)) {
+						vientoMaximo.put(hora, viento);
+					}
+				}
+			}
+
+			texto.append("- ").append(planta.getNombre()).append(":  ").append(minima).append(" m/s\n");
+
+			//recorro las horas 0 a 23 en orden 
+			for (int hora = 0; hora < 24; hora++) {
+
+				//se imprime solo si hubo registros (lo miro con el containsKey) y si el máximo no llegó al mínimo
+				if (vientoMaximo.containsKey(hora) && vientoMaximo.get(hora) < minima) {
+
+					texto.append("       ");
+					if (hora < 10) {
+						texto.append("0");                     // se le agrega el 0 para que no rompa con los test, daba error, me parece que con esto pasa
+					}
+					texto.append(hora).append(": ").append(vientoMaximo.get(hora)).append(" m/s\n");
+				}
+			}
+		}
+
+		// Devuelvo todo el texto armado
+		return texto.toString();
 	}
 
 	@Override

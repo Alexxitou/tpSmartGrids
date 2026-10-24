@@ -503,7 +503,7 @@ public class SmartGrids implements ISmartGrids {
 	@Override
 	public List<String> plantasOrdenadasPorEnergiaGenerada() {
 
-	    HashMap<String, Double> totales = new HashMap<>();// guarda el total de energía generada por cada planta
+	    HashMap<String, Double> totales = new HashMap<>();// guarda la planta y el total de energía generada por cada planta
 
 	    for (String nombre : conjuntoPlantas.keySet()) {//recorre las plantas
 
@@ -525,35 +525,32 @@ public class SmartGrids implements ISmartGrids {
 	        totales.put(nombre, totalGenerado); //se guarda el total calculado en el HashMap
 	    }
 
-
-	    List<String> nombres = new ArrayList<>();//se crea una lista con los nombres de las plantas.
-
-	    for (String nombre : conjuntoPlantas.keySet()) {//recorre las plantas y las añade a la lista
-	        nombres.add(nombre);
-	    }
-
-	    // Ordenamos de mayor a menor energía generada.
-	    // Si dos plantas empatan, las ordenamos alfabéticamente.
-	    nombres.sort((nombre1, nombre2) -> {
-	        int comparacion = Double.compare(totales.get(nombre2),totales.get(nombre1));
-
-	        if (comparacion == 0) {
-	            return nombre1.compareTo(nombre2);
-	        	}
-
-	        return comparacion;
-	    });
+	    
+	    
 	    
 
-	    // Construimos la lista con el formato solicitado.
-	    List<String> resultado = new ArrayList<>();
+	    List<String> resultado = new ArrayList<>(); //lista para guardar las plantas ordenadas
+	    List<Double> energias = new ArrayList<>(); //lista auxiliar para guardar el total de energias de cada planta
 
-	    for (String nombre : nombres) {
-	        resultado.add(nombre + ": " + totales.get(nombre));
+	    for (String nombre : totales.keySet()) { //recorre el diccionario de plantas y energias totales
+
+	        double energia = totales.get(nombre);//toma la energia total de esa planta
+	        int posicion = 0;
+
+
+	        while (posicion < energias.size()// Busca la posición según la energía.
+	                && energias.get(posicion) >= energia) {
+	            posicion++;
+	        }
+
+	        // Insertamos ambos datos en la misma posición.
+	        energias.add(posicion, energia);
+	        resultado.add(posicion, nombre + ": " + energia);
 	    }
 
 	    return resultado;
 	}
+	
 
 	
 	/*

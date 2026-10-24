@@ -3,7 +3,7 @@ package ar.edu.ungs.prog2.smartgrids;
 
 public abstract class PlantaRenovable extends Planta {
 	
-	private String fuentePrimaria;
+	protected String fuentePrimaria;
 	protected double eficienciaPromedio;
 	
 	
@@ -21,12 +21,10 @@ public abstract class PlantaRenovable extends Planta {
 	
 	
 	
-	public boolean esRenovable() {
-		return false;
-	}
-	public String getFuentePrimaria() {
-		return "";
-	}
+	public abstract boolean esRenovable();
+	
+	public abstract String getFuentePrimaria();
+	
 	public abstract double capacidadMinimaCuota();
 	
 	@Override

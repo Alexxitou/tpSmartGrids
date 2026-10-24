@@ -37,6 +37,7 @@ public class PlantaTermica extends Planta{
 	}
 
 
+
 	@Override
 	public boolean cumpleCuota(Monitoreo monitoreo) {
 		if(!(monitoreo instanceof MonitoreoTermica)) { //Para descartar los monitoreos que no sean MonitoreoTermica que se pasen como parámetro
@@ -65,6 +66,25 @@ public class PlantaTermica extends Planta{
 		
 		return st.toString();
 	}
+
+
+
+
+	public boolean esRenovable() {
+		return false;
+	}
+
+
+
+
+	public String getFuentePrimaria() {
+		return null;
+	}
+
+
+
+
+
 
 
 }

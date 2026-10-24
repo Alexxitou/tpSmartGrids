@@ -50,4 +50,16 @@ public class PlantaEolica extends PlantaRenovable {
 		return st.toString();
 	}
 
+
+	@Override
+	public boolean esRenovable() {
+		return true;
+	}
+
+
+	@Override
+	public String getFuentePrimaria() {
+		return fuentePrimaria;
+	}
+
 }

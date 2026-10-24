@@ -1,6 +1,7 @@
 package ar.edu.ungs.prog2.smartgrids;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.management.RuntimeErrorException;
 
@@ -405,10 +406,29 @@ public class SmartGrids implements ISmartGrids {
 
 	@Override
 	public Map<String, Integer> plantasRenovablesPorFuente() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		 
+	    Map<String, Integer> resultado = new TreeMap<>(); // TreeMap mantiene las fuentes ordenadas alfabéticamente.
 
+
+	    for (String nombre : conjuntoPlantas.keySet()) {//recorre el diccionario de Plantas
+
+	        Planta planta = conjuntoPlantas.get(nombre);
+
+	        if (planta.esRenovable()) { //verifica si la Planta es renovable
+
+	            String fuente = planta.getFuentePrimaria(); //obtiene la fuente primaria de la planta
+
+	            if (resultado.containsKey(fuente)) {// Si la fuente ya está registrada, sumamos uno.
+	                resultado.put(fuente, resultado.get(fuente) + 1);
+	            }
+	            // Si es la primera planta de esa fuente, comenzamos en uno.
+	            else {
+	                resultado.put(fuente, 1);
+	            }
+	        }
+	    }
+	    return resultado;
+	}
 	/*
      * 9) Devuelve nombres de las plantas que nunca cumplieron la cuota, 
      * incluso si no tienen monitoreos.

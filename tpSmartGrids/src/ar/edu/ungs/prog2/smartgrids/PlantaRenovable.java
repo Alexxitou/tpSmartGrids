@@ -28,25 +28,15 @@ public abstract class PlantaRenovable extends Planta {
 		return "";
 	}
 	public abstract double capacidadMinimaCuota();
-	/*@Override
+	
+	@Override
 	public String toString() {
-
-		if (estadoPlanta) {
-		return "Nombre: "+nombre+"/n"+
-				"direccion: "+direccion+"/n"+
-				"capacidad Máxima de Generación: "+capMaxGeneracion+"/n"+
-				"Estado de la planta: "+"ACTIVA"+"/n"+
-				"Fecha puesta en funcionamiento: "+fechaFuncionamiento+"/n"+
-				"Fuente Primaria: "+fuentePrimaria+"/n"+
-				"Eficiencia Promedio"+
-		} else {
-			return "Nombre: "+nombre+"/n"+
-					"direccion: "+direccion+"/n"+
-					"capacidad Máxima de Generación: "+capMaxGeneracion+"/n"+
-					"Estado de la planta: "+"DESACTIVADA"+"/n"+
-					"Fecha puesta en funcionamiento: "+fechaFuncionamiento+"/n";
-		}
-	
-	}*/
-	
+		StringBuilder st = new StringBuilder();
+		
+		st.append(super.toString()).append("\n");
+		st.append("Fuente Primaria: ").append(fuentePrimaria).append("\n");
+		st.append("Eficiencia Promedio: ").append(eficienciaPromedio).append("%\n");
+		return st.toString();
+	}
 }
+

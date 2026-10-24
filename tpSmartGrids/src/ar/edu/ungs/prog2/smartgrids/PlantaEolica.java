@@ -38,6 +38,16 @@ public class PlantaEolica extends PlantaRenovable {
 		return capacidadMaxima * (eficienciaPromedio/100);
 	}
 
-
+	@Override
+	public String toString() {
+		StringBuilder st= new StringBuilder();
+		
+		st.append(super.toString()).append("\n");
+		st.append("Cantidad de Aerogeneradores: ").append(cantidadAerogeneradores).append("\n");
+		st.append("Altura de las torres: ").append(alturaTorres).append("\n");
+		st.append("Velocidad minima del viento: ").append(velocidadMinimaViento).append("\n");
+		
+		return st.toString();
+	}
 
 }

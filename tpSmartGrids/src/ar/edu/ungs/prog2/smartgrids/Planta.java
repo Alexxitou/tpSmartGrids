@@ -57,11 +57,6 @@ public abstract class Planta {
 			
 			
 		}
-	
-	
-		
-		
-		
 		
 	}
 	
@@ -85,6 +80,24 @@ public abstract class Planta {
 		return registroInactividad;
 	}
 	
-	
+	@Override
+	public String toString() {
+		StringBuilder st = new StringBuilder();
+		
+		st.append("Nombre: ").append(nombre).append("\n");
+		st.append("Dirección: ").append(direccion).append("\n");
+		st.append("Capacidad máxima de generación: ").append(capacidadMaxima).append("\n");
+		String estado; //esto es para guardar el estado
+        
+        if (estaActiva()) {
+            estado = "ACTIVA";
+        } else {
+            estado = "INACTIVA";
+        }
+		st.append("Estado: ").append(estado).append("\n");
+		st.append("Puesta en funcionamiento: ").append(fechaHoraPuestaEnFuncionamiento).append("\n");
+		
+		return st.toString();
+	}
 	
 }

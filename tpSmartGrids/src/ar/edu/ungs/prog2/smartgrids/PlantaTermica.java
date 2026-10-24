@@ -54,7 +54,17 @@ public class PlantaTermica extends Planta{
 		return false;
 		
 	}
-
+	@Override
+	public String toString() {
+		StringBuilder st= new StringBuilder();
+		
+		st.append(super.toString()).append("\n");
+		st.append("Tipo de combustible: ").append(tipoCombustible).append("\n");
+		st.append("Objetivo de emisiones de CO2 por hora: ").append(objetivoEmisionesCo2PorHora).append("\n");
+		st.append("Capacidad de almacenamiento del combustible: ").append(capacidadAlmacenamientoCombustible).append("\n");
+		
+		return st.toString();
+	}
 
 
 }

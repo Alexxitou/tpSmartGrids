@@ -29,4 +29,15 @@ public class MonitoreoTermica extends Monitoreo {
 	public double getEnergiaGenerada() {
 		return energiaGenerada;
 	}
+	
+	@Override
+    public String toString() {
+    StringBuilder st= new StringBuilder();
+    st.append(super.toString()).append("\n");
+    st.append("CO2 generado: ").append(Co2Generado).append("\n");
+    st.append("Cantidad de combustible utilizado: ").append(combustibleUtilizado).append("\n");
+    
+    return st.toString();
+    }
+	
 }

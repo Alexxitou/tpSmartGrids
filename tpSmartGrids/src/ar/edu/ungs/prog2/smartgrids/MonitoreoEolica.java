@@ -14,5 +14,13 @@ public class MonitoreoEolica extends Monitoreo {
         this.velVientoPromedio = velVientoPromedio;
         
     }
-
+    
+    @Override
+    public String toString() {
+    StringBuilder st= new StringBuilder();
+    st.append(super.toString()).append("\n");
+    st.append("Velocidad Promedio del viento: ").append(velVientoPromedio).append("\n");
+    
+    return st.toString();
+    }
 }

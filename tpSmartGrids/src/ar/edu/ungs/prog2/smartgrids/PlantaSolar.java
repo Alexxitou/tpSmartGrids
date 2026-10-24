@@ -35,4 +35,17 @@ public class PlantaSolar extends PlantaRenovable {
 	public boolean cumpleCuota(Monitoreo monitoreo) {
 		 return monitoreo.getEnergiaGenerada()>= capacidadMinimaCuota();
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder st= new StringBuilder();
+		
+		st.append(super.toString()).append("\n");
+		st.append("Superficie Cubierta: ").append(superficieCubierta).append("\n");
+		st.append("Cantidad de Paneles: ").append(cantidadPaneles).append("\n");
+		st.append("Horas de radiación diaria: ").append(horasRadiacionDiaria).append("\n");
+		
+		return st.toString();
+	}
+	
 }

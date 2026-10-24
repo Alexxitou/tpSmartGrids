@@ -366,19 +366,9 @@ public class SmartGrids implements ISmartGrids {
 	@Override
 	public int[] histogramaCumplimiento(String nombre, String fechaDesde, String fechaHasta) {
 		
-		if(nombre==null) { 
-			throw new RuntimeException("el nombre no puede ser null");
-		}
-		
-		if(fechaDesde==null || fechaHasta==null) {
-			throw new RuntimeException("Las fechas no pueden ser null");
-		}
-
 		LocalDate desde = LocalDate.parse(fechaDesde); //convierte el string en LocalDate
 	    
 	    LocalDate hasta = LocalDate.parse(fechaHasta); //convierte el string en LocalDate
-
-	    int[] histograma = new int[24]; // crea la lista con 24 espacios vacios
 		
 		if(!conjuntoPlantas.containsKey(nombre)) { //verifica si la planta no existe en el diccionario
 			throw new RuntimeException("Planta no registrada");
@@ -387,6 +377,7 @@ public class SmartGrids implements ISmartGrids {
 			throw new RuntimeException("La fechaDesde no puede ser posterior a la fechaHasta");
 		}
 		
+		int[] histograma = new int[24]; // crea la lista con 24 espacios vacios
 		
 		HashMap<LocalDateTime, Monitoreo> diccionarioInterior = conjuntoMonitoreos.get(nombre); //toma el diccionario de Monitoreos de la planta correspondiente
 		
@@ -497,5 +488,41 @@ public class SmartGrids implements ISmartGrids {
 			}
 		}
 		return lista;
+	}
+	
+	//Para imprimir SmartGrids
+	@Override
+	public String toString() {
+		StringBuilder sb= new StringBuilder();
+		
+		sb.append("====== SMARTGRIDS ======\n");
+		sb.append("PLANTAS REGISTRADAS\n");
+		sb.append("-------------------\n");
+		for (String nombre: conjuntoPlantas.keySet()) {;
+			Planta planta= conjuntoPlantas.get(nombre);
+			sb.append(planta.toString()); //imprime los datos de la planta	
+			sb.append("\n\n");
+		}
+		sb.append("MONITOREOS REGISTRADOS\n");
+		sb.append("----------------------\n");
+		for (String nombre: conjuntoMonitoreos.keySet()) {
+			HashMap<LocalDateTime, Monitoreo> diccionarioInterior = conjuntoMonitoreos.get(nombre);
+			
+			for(LocalDateTime f: diccionarioInterior.keySet()) {
+				
+				sb.append("   ").append(f.toString()).append(" : ");
+				
+				Monitoreo m= diccionarioInterior.get(f);
+				
+				if (m==null) {
+					sb.append("Sin Monitoreos.");
+				}else {
+					sb.append(m.toString()); //imprime los datos del monitoreo
+				}
+				sb.append("\n");
+			} 
+			sb.append("\n");		
+		}
+		return sb.toString();
 	}
 }

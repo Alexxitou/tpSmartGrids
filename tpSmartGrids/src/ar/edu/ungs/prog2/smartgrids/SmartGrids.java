@@ -470,10 +470,23 @@ public class SmartGrids implements ISmartGrids {
 
 	@Override
 	public int limpiarMonitoreosSinDatos() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+		int borrados = 0;
+		for (HashMap<LocalDateTime, Monitoreo> monitoreosDePlanta : conjuntoMonitoreos.values()) {
 
+		    List<LocalDateTime> aBorrar = new ArrayList<>();
+
+		    for (Monitoreo m : monitoreosDePlanta.values()) {
+		        if (m.getEnergiaGenerada() == 0 && m.getCantidadIncidencias() == 0) {
+		            aBorrar.add(m.getFechaHora());
+		        }
+		    }
+		    for (LocalDateTime clave : aBorrar) {
+		        monitoreosDePlanta.remove(clave);
+		        borrados++;
+		    }
+		}
+		return borrados;
+	}
 	@Override
 	public List<String> plantasOrdenadasPorEnergiaGenerada() {
 

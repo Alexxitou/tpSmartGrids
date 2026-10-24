@@ -43,6 +43,10 @@ public class Monitoreo {
 		return energiaGenerada;
 	}
 	
+    public int getCantidadIncidencias() {
+        return cantidadIncidencias;
+    }
+
 	@Override
 	public String toString() {
 		StringBuilder st= new StringBuilder();

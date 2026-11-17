@@ -26,7 +26,7 @@ public class PlantaHidraulica extends PlantaRenovable{
 	
 	@Override
 	public double capacidadMinimaCuota() {
-		return capacidadMaxima * (eficienciaPromedio/100);
+		return capacidadMaxima * eficienciaPromedio;
 	}
 
 	@Override

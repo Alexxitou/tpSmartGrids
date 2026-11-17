@@ -12,7 +12,7 @@ public abstract class PlantaRenovable extends Planta {
 		if (fuentePrimaria==null || fuentePrimaria=="") {
 			throw new RuntimeException("Fuente Primaria no válida");
 		}
-		if (eficienciaPromedio<0 || eficienciaPromedio>100) {
+		if (eficienciaPromedio<0 || eficienciaPromedio>1) {
 			throw new RuntimeException("Valor de eficiencia Promedio no válida");
 		}
 		this.fuentePrimaria=fuentePrimaria;
@@ -27,7 +27,7 @@ public abstract class PlantaRenovable extends Planta {
 		
 		st.append(super.toString()).append("\n");
 		st.append("Fuente Primaria: ").append(fuentePrimaria).append("\n");
-		st.append("Eficiencia Promedio: ").append(eficienciaPromedio).append("%\n");
+		st.append("Eficiencia Promedio: ").append(eficienciaPromedio).append("\n");
 		return st.toString();
 	}
 }

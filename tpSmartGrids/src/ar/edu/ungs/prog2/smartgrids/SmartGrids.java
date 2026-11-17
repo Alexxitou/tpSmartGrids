@@ -3,7 +3,7 @@ package ar.edu.ungs.prog2.smartgrids;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.management.RuntimeErrorException;
-
+import java.util.Iterator;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -72,6 +72,11 @@ public class SmartGrids implements ISmartGrids {
 	public void registrarPlantaHidraulica(String nombre, String direccion, double capacidadMaxima,
 			String fechaHoraPuestaEnFuncionamiento, String fuentePrimaria, double eficienciaPromedio,
 			int cantidadTurbinas, double capacidadEmbalse) {
+		
+		if (conjuntoPlantas.containsKey(nombre)) {
+			throw new IllegalArgumentException("Ya existe una planta con ese nombre");
+		}
+		//faltaba el chequeo, por eso tiraba error el test, se pisaban si ya existia una planta con ese nombre
 
 		PlantaHidraulica Planta = new PlantaHidraulica(nombre, direccion, capacidadMaxima, fechaHoraPuestaEnFuncionamiento, fuentePrimaria, eficienciaPromedio, cantidadTurbinas, capacidadEmbalse);
 
@@ -84,7 +89,11 @@ public class SmartGrids implements ISmartGrids {
 	public void registrarPlantaTermica(String nombre, String direccion, double capacidadMaxima,
 			String fechaHoraPuestaEnFuncionamiento, String tipoCombustible, double objetivoEmisionesCo2PorHora,
 			double capacidadAlmacenamientoCombustible) {
-
+				
+		if (conjuntoPlantas.containsKey(nombre)) {
+			throw new IllegalArgumentException("Ya existe una planta con ese nombre");
+		}
+		//faltaba el chequeo, por eso tiraba error el test, se pisaban si ya existia una planta con ese nombre
 		PlantaTermica Planta = new PlantaTermica(nombre, direccion, capacidadMaxima, fechaHoraPuestaEnFuncionamiento, tipoCombustible, objetivoEmisionesCo2PorHora, capacidadAlmacenamientoCombustible);
 		
 
@@ -211,6 +220,11 @@ public class SmartGrids implements ISmartGrids {
 	public void registrarMonitoreo(String nombre, String fechaHora, double energiaGenerada, int incidencias) {
 	    LocalDateTime fecha = parsearFecha(fechaHora);
 	    Planta planta = obtenerPlantaParaMonitoreo(nombre, fecha);
+
+		//si son eolica o termina no las toma, estas tienen sus propios monitoreos
+		if (planta instanceof PlantaEolica || planta instanceof PlantaTermica) {
+        	throw new RuntimeException("Esta planta requiere un monitoreo especifico.");
+    	}
 
 	    guardarMonitoreo(nombre, fecha, new Monitoreo(planta, fecha, energiaGenerada, incidencias));
 	}
@@ -391,7 +405,7 @@ public class SmartGrids implements ISmartGrids {
 					
 					Monitoreo m= diccionarioInterior.get(fechaHora);//toma el monitoreo del diccionario interior
 					
-					cumpleAlgunaVez= cumpleAlgunaVez || (m!=null || conjuntoPlantas.get(nombre).cumpleCuota(m));//verifica si la cuota se cumple alguna vez. en ese caso, cumpleAlgunaVez se vuelve true 	
+						cumpleAlgunaVez = cumpleAlgunaVez || (m != null && conjuntoPlantas.get(nombre).cumpleCuota(m)); //verifica si la cuota se cumple alguna vez. en ese caso, cumpleAlgunaVez se vuelve true 	
 					}
 				}
 			
@@ -481,17 +495,15 @@ public class SmartGrids implements ISmartGrids {
 		int borrados = 0;
 		for (HashMap<LocalDateTime, Monitoreo> monitoreosDePlanta : conjuntoMonitoreos.values()) {
 
-		    List<LocalDateTime> aBorrar = new ArrayList<>();
+			Iterator<Monitoreo> it = monitoreosDePlanta.values().iterator(); // iterador sobre los monitoreos de la planta
 
-		    for (Monitoreo m : monitoreosDePlanta.values()) {
-		        if (m.getEnergiaGenerada() == 0 && m.getCantidadIncidencias() == 0) {
-		            aBorrar.add(m.getFechaHora());
-		        }
-		    }
-		    for (LocalDateTime clave : aBorrar) {
-		        monitoreosDePlanta.remove(clave);
-		        borrados++;
-		    }
+			while (it.hasNext()) { // mientras queden monitoreos
+				Monitoreo m = it.next(); // toma el siguiente y avanza
+				if (m.getEnergiaGenerada() == 0 && m.getCantidadIncidencias() == 0) {
+					it.remove();
+					borrados++;
+				}
+			}
 		}
 		return borrados;
 	}
@@ -568,7 +580,8 @@ public class SmartGrids implements ISmartGrids {
 			for(LocalDateTime inicio: registroInactividad.keySet()) { //recorre el registro
 				LocalDateTime fin= registroInactividad.get(inicio);
 				
-				if(!fecha.isAfter(inicio)&& (fin==null || fecha.isBefore(fin))){ //verifica que la fecha esté después del inicioInactividad, y antes del finInactividad 
+				//estaba mal porque los is estaban al reves if(!fecha.isAfter(inicio)&& (fin==null || fecha.isBefore(fin))){  
+				if (!fecha.isBefore(inicio) && (fin == null || fecha.isBefore(fin))) { //verifica que la fecha esté después del inicioInactividad, y antes del finInactividad 
 					lista.add(nombre);  //si fecha está entre ese periodo, agrega el nombre de la planta a la lista, deja de recorrer el registro, y salta a la siguiente planta.
 					break;
 				}

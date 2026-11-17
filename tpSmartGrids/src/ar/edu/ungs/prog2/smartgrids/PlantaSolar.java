@@ -28,7 +28,7 @@ public class PlantaSolar extends PlantaRenovable {
 
 	@Override
 	public double capacidadMinimaCuota() {
-		return capacidadMaxima * (eficienciaPromedio/100) * horasRadiacionDiaria;
+		return capacidadMaxima * eficienciaPromedio * horasRadiacionDiaria /24; //se saco el 100 y se agrego el /24 para que promedie con las horas del dia
 	}
 
 	@Override

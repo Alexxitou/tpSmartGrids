@@ -14,10 +14,12 @@ public class SmartGrids implements ISmartGrids {
 	
 	private HashMap<String,Planta> conjuntoPlantas;
 	private HashMap<String,HashMap<LocalDateTime,Monitoreo>> conjuntoMonitoreos;
+	private ArrayList<String> ordenPlantas;
 
 	public SmartGrids() {
 		conjuntoPlantas = new HashMap<>();
-		conjuntoMonitoreos= new HashMap<>();	
+		conjuntoMonitoreos= new HashMap<>();
+		ordenPlantas= new ArrayList<>();
 	}
 	
 
@@ -46,6 +48,7 @@ public class SmartGrids implements ISmartGrids {
 		
 		conjuntoPlantas.put(nombre, Planta); //agrega la planta al diccionario de plantas
 		
+		ordenPlantas.add(nombre);
 		conjuntoMonitoreos.put(nombre, new HashMap<>());//agrega al diccionario de Monitoreos el nombre de la planta y un diccionario vacío para meter sus monitoreos.
 			
 	}
@@ -62,7 +65,7 @@ public class SmartGrids implements ISmartGrids {
 		PlantaEolica Planta= new PlantaEolica(nombre, direccion, capacidadMaxima, fechaHoraPuestaEnFuncionamiento, fuentePrimaria, eficienciaPromedio, cantidadAerogeneradores, alturaTorres, velocidadMinimaViento);
 		
 		conjuntoPlantas.put(nombre, Planta);
-		
+		ordenPlantas.add(nombre);
 		conjuntoMonitoreos.put(nombre, new HashMap<>());
 		
 
@@ -81,6 +84,7 @@ public class SmartGrids implements ISmartGrids {
 		PlantaHidraulica Planta = new PlantaHidraulica(nombre, direccion, capacidadMaxima, fechaHoraPuestaEnFuncionamiento, fuentePrimaria, eficienciaPromedio, cantidadTurbinas, capacidadEmbalse);
 
 		conjuntoPlantas.put(nombre,Planta);
+		ordenPlantas.add(nombre);
 		
 		conjuntoMonitoreos.put(nombre, new HashMap<>());
 	}
@@ -98,6 +102,7 @@ public class SmartGrids implements ISmartGrids {
 		
 
 		conjuntoPlantas.put(nombre,Planta);
+		ordenPlantas.add(nombre);
 		
 		conjuntoMonitoreos.put(nombre, new HashMap<>());
 
@@ -119,7 +124,7 @@ public class SmartGrids implements ISmartGrids {
 		List<String> resultado = new ArrayList<>(); // crea la lista
 		
 		
-	    for (String nombre : conjuntoPlantas.keySet()) { // Recorre en el diccionario las plantas por nombre
+	    for (String nombre : ordenPlantas) { // Recorre los nombres en el orden en que se registraron
 
 	        Planta planta = conjuntoPlantas.get(nombre); //obtiene la planta
 
@@ -393,8 +398,7 @@ public class SmartGrids implements ISmartGrids {
 		
 		List<String> lista= new ArrayList<>();
 		
-		for (String nombre:conjuntoPlantas.keySet()) { //recorre las plantas
-			
+		for (String nombre : ordenPlantas) { //recorre las plantas en orden de registro			
 			boolean cumpleAlgunaVez=false; //Acumulador Booleano
 			
 			HashMap<LocalDateTime,Monitoreo> diccionarioInterior= conjuntoMonitoreos.get(nombre); //toma el diccionario interior de conjuntoMonitoreos

@@ -2,7 +2,6 @@ package ar.edu.ungs.prog2.smartgrids;
 
 import java.util.Map;
 import java.util.TreeMap;
-import javax.management.RuntimeErrorException;
 import java.util.Iterator;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,9 +11,9 @@ import java.util.List;
 
 public class SmartGrids implements ISmartGrids {
 	
-	private HashMap<String,Planta> conjuntoPlantas;
-	private HashMap<String,HashMap<LocalDateTime,Monitoreo>> conjuntoMonitoreos;
-	private ArrayList<String> ordenPlantas;
+	private HashMap<String,Planta> conjuntoPlantas; //<nombre,Planta>
+	private HashMap<String,HashMap<LocalDateTime,Monitoreo>> conjuntoMonitoreos; //<nombre, <fechaHora, Monitoreo>>
+	private ArrayList<String> ordenPlantas; //Recorrer las plantas en el orden en que se cargaron. consultarPlantas() 
 
 	public SmartGrids() {
 		conjuntoPlantas = new HashMap<>();
@@ -40,17 +39,12 @@ public class SmartGrids implements ISmartGrids {
 			String fechaHoraPuestaEnFuncionamiento, String fuentePrimaria, double eficienciaPromedio,
 			double superficieCubierta, int cantidadPaneles, double horasRadiacionDiaria) {
 		
-		if (conjuntoPlantas.containsKey(nombre)) { //
-			 throw new IllegalArgumentException("Ya existe una planta con ese nombre");
-		}
+		existePlanta(nombre);
 		//crear la planta
 		PlantaSolar Planta= new PlantaSolar(nombre, direccion, capacidadMaxima, fechaHoraPuestaEnFuncionamiento, fuentePrimaria, eficienciaPromedio, superficieCubierta, cantidadPaneles, horasRadiacionDiaria);
 		
-		conjuntoPlantas.put(nombre, Planta); //agrega la planta al diccionario de plantas
-		
-		ordenPlantas.add(nombre);
-		conjuntoMonitoreos.put(nombre, new HashMap<>());//agrega al diccionario de Monitoreos el nombre de la planta y un diccionario vacío para meter sus monitoreos.
-			
+		guardarPlanta(nombre, Planta);
+	
 	}
 
 	@Override
@@ -58,16 +52,12 @@ public class SmartGrids implements ISmartGrids {
 			String fechaHoraPuestaEnFuncionamiento, String fuentePrimaria, double eficienciaPromedio,
 			int cantidadAerogeneradores, double alturaTorres, double velocidadMinimaViento) {
 
-		if (conjuntoPlantas.containsKey(nombre)) { //
-			 throw new IllegalArgumentException("Ya existe una planta con ese nombre");
-		}
+		existePlanta(nombre);
 		
 		PlantaEolica Planta= new PlantaEolica(nombre, direccion, capacidadMaxima, fechaHoraPuestaEnFuncionamiento, fuentePrimaria, eficienciaPromedio, cantidadAerogeneradores, alturaTorres, velocidadMinimaViento);
 		
-		conjuntoPlantas.put(nombre, Planta);
-		ordenPlantas.add(nombre);
-		conjuntoMonitoreos.put(nombre, new HashMap<>());
-		
+		guardarPlanta(nombre, Planta);
+
 
 	}
 
@@ -76,17 +66,13 @@ public class SmartGrids implements ISmartGrids {
 			String fechaHoraPuestaEnFuncionamiento, String fuentePrimaria, double eficienciaPromedio,
 			int cantidadTurbinas, double capacidadEmbalse) {
 		
-		if (conjuntoPlantas.containsKey(nombre)) {
-			throw new IllegalArgumentException("Ya existe una planta con ese nombre");
-		}
+		existePlanta(nombre);
 		//faltaba el chequeo, por eso tiraba error el test, se pisaban si ya existia una planta con ese nombre
 
 		PlantaHidraulica Planta = new PlantaHidraulica(nombre, direccion, capacidadMaxima, fechaHoraPuestaEnFuncionamiento, fuentePrimaria, eficienciaPromedio, cantidadTurbinas, capacidadEmbalse);
 
-		conjuntoPlantas.put(nombre,Planta);
-		ordenPlantas.add(nombre);
-		
-		conjuntoMonitoreos.put(nombre, new HashMap<>());
+		guardarPlanta(nombre, Planta);
+
 	}
 
 	@Override
@@ -94,29 +80,15 @@ public class SmartGrids implements ISmartGrids {
 			String fechaHoraPuestaEnFuncionamiento, String tipoCombustible, double objetivoEmisionesCo2PorHora,
 			double capacidadAlmacenamientoCombustible) {
 				
-		if (conjuntoPlantas.containsKey(nombre)) {
-			throw new IllegalArgumentException("Ya existe una planta con ese nombre");
-		}
+		existePlanta(nombre);
 		//faltaba el chequeo, por eso tiraba error el test, se pisaban si ya existia una planta con ese nombre
 		PlantaTermica Planta = new PlantaTermica(nombre, direccion, capacidadMaxima, fechaHoraPuestaEnFuncionamiento, tipoCombustible, objetivoEmisionesCo2PorHora, capacidadAlmacenamientoCombustible);
 		
 
-		conjuntoPlantas.put(nombre,Planta);
-		ordenPlantas.add(nombre);
-		
-		conjuntoMonitoreos.put(nombre, new HashMap<>());
+		guardarPlanta(nombre, Planta);
 
 	}
 
-	 /*
-     * 1.b) Consultar plantas exstentes.
-     * 
-     * Que devuelve un lista con el detalle de cada planta:
-     *
-     *  cada item debe respetar el formato: "{NOMBRE} ({ACTIVA|INACTIVA}): {FECHA_PUESTA_EN_FUNCIONAMIENTO}"
-     * Por ejemplo:
-     *     "Atucha II (ACTIVA): 2014-06-27T09:00:00"
-     */
 	
 	@Override
 	public List<String> consultarPlantas() {
@@ -127,21 +99,12 @@ public class SmartGrids implements ISmartGrids {
 	    for (String nombre : ordenPlantas) { // Recorre los nombres en el orden en que se registraron
 
 	        Planta planta = conjuntoPlantas.get(nombre); //obtiene la planta
-
-	        String estado; //esto es para guardar el estado
-	        
-	        if (planta.estaActiva()) {
-	            estado = "ACTIVA";
-	        } else {
-	            estado = "INACTIVA";
-	        }
-	        
 	     
 	        StringBuilder texto = new StringBuilder(); //Construye el texto usando StringBuilder
 
 	        texto.append(planta.getNombre());
 	        texto.append(" (");
-	        texto.append(estado);
+	        texto.append(planta.getEstadoTexto());
 	        texto.append("): ");
 	        texto.append(planta.getFechaHoraPuestaEnFuncionamiento());
 
@@ -150,46 +113,22 @@ public class SmartGrids implements ISmartGrids {
 	    }
 	    return resultado; // Devuelve la lista		
 	}
-	/*
-     * 2) Consulta cuanta energia debe generar la planta en una hora para
-     * cumplir la cuota. En las solares se tiene en cuenta la radiacion;
-     * en las eolicas e hidraulicas, la eficiencia. Las termicas deben
-     * generar la mitad de su capacidad y emitir menos CO2 que el objetivo
-     * por hora.
-     *
-     * @throws RuntimeException si la planta no existe
-     */
-	
+
 	
 	@Override
 	public double capacidadMinimaCuota(String nombre) {
-		if(!conjuntoPlantas.containsKey(nombre)) { //verifica si la planta no existe en el diccionario
-			throw new RuntimeException("La planta no existe");
-		}
-		Planta planta = conjuntoPlantas.get(nombre);
+		Planta planta = obtenerPlanta(nombre);
 		
 		return planta.capacidadMinimaCuota();
 	}
 
-	/*
-     * 3) Activar, desactivar una planta y consultar si está activa. 
-     * 
-     * La actualizacion y consulta se debe resolver en O(1).
-     * 
-     * @throws RuntimeException si la planta no existe o el formato de 
-     *         fechaHora es inválido.
-     */
-	
+
 	@Override
 	public void activarPlanta(String nombre, String fechaHora) {
 		
-		if(!conjuntoPlantas.containsKey(nombre)) { //verifica si la planta no existe en el diccionario
-			throw new RuntimeException("Planta no registrada");
-		}
+		LocalDateTime fecha = normalizarFecha(fechaHora);
 		
-		LocalDateTime fecha= LocalDateTime.parse(fechaHora); //convierte el string en LocalDateTime
-		
-		Planta planta= conjuntoPlantas.get(nombre); //obtiene la planta del diccionario
+		Planta planta= obtenerPlanta(nombre);
 		
 		planta.activar(fecha); //activa la planta
 		
@@ -199,31 +138,23 @@ public class SmartGrids implements ISmartGrids {
 	@Override
 	public void desactivarPlanta(String nombre, String fechaHora) {
 		
-		if(!conjuntoPlantas.containsKey(nombre)) { //verifica si la planta no existe en el diccionario
-			throw new RuntimeException("Planta no registrada");
-		}
-		
-		LocalDateTime fecha= LocalDateTime.parse(fechaHora); //convierte el string en LocalDateTime
+		LocalDateTime fecha = normalizarFecha(fechaHora);
 
-		Planta planta= conjuntoPlantas.get(nombre); //obtiene la planta del diccionario
+		Planta planta = obtenerPlanta(nombre);
 		
 		planta.desactivar(fecha); //desactiva la planta
-		
-		
-
 
 	}
 
 	@Override
 	public boolean estaActiva(String nombre) {
-		Planta planta= conjuntoPlantas.get(nombre); //obtiene la planta del diciconario
-
+		Planta planta = obtenerPlanta(nombre);
 		return planta.estaActiva(); //devuelve el estado
 	}
 
 	@Override
 	public void registrarMonitoreo(String nombre, String fechaHora, double energiaGenerada, int incidencias) {
-	    LocalDateTime fecha = parsearFecha(fechaHora);
+	    LocalDateTime fecha = normalizarFecha(fechaHora);
 	    Planta planta = obtenerPlantaParaMonitoreo(nombre, fecha);
 
 		//si son eolica o termina no las toma, estas tienen sus propios monitoreos
@@ -237,7 +168,7 @@ public class SmartGrids implements ISmartGrids {
 	@Override
 	public void registrarMonitoreo(String nombre, String fechaHora, double energiaGenerada, int incidencias,
 	        double velocidadViento) {
-	    LocalDateTime fecha = parsearFecha(fechaHora);
+	    LocalDateTime fecha = normalizarFecha(fechaHora);
 	    Planta planta = obtenerPlantaParaMonitoreo(nombre, fecha);
 
 	    if (!(planta instanceof PlantaEolica)) {
@@ -249,7 +180,7 @@ public class SmartGrids implements ISmartGrids {
 	@Override
 	public void registrarMonitoreo(String nombre, String fechaHora, double energiaGenerada, int incidencias,
 	        double co2Emitido, double combustibleUtilizado) {
-	    LocalDateTime fecha = parsearFecha(fechaHora);
+	    LocalDateTime fecha = normalizarFecha(fechaHora);
 	    Planta planta = obtenerPlantaParaMonitoreo(nombre, fecha);
 
 	    if (!(planta instanceof PlantaTermica)) {
@@ -261,9 +192,7 @@ public class SmartGrids implements ISmartGrids {
 	@Override
 	public double totalGenerado(String nombre) {
 
-		if (!conjuntoPlantas.containsKey(nombre)) {
-			throw new RuntimeException("No existe esa planta");
-		}
+		noExistePlanta(nombre);
 
 		double sumaEnergiaGenerada = 0;
 
@@ -277,18 +206,11 @@ public class SmartGrids implements ISmartGrids {
 	}
 
 
-	/*
-     * 6) Devuelve un arreglo con 24 posiciones con las incidencias acumuladas 
-     *         para cada hora del dia.
-     * 
-     * @throws RuntimeException si la planta no existe
-     */
 	@Override
 	public int[] incidenciasPorHora(String nombre) {
 
-	    if (!conjuntoPlantas.containsKey(nombre)) {//Verifica si la planta existe en el diccionario
-	        throw new RuntimeException("La planta no existe");
-	    }
+		noExistePlanta(nombre);
+
 
 	    int[] resultado = new int[24]; //crea un arreglo con 24 espacios vacíos.
 
@@ -313,16 +235,7 @@ public class SmartGrids implements ISmartGrids {
 	    }
 	    return resultado;
 	}
-	/*
-     * 7) Cuenta, para cada hora del dia, en cuantos dias se cumplio la cuota
-     * entre las fechas indicadas, incluidas ambas.
-     *
-     * Devuelve un arreglo con 24 posiciones, una por cada hora del dia
-     * 
-     * @throws RuntimeException si la planta no existe o si desde es
-     *         posterior a hasta.
-     */
-	
+
 	@Override
 	public int[] histogramaCumplimiento(String nombre, String fechaDesde, String fechaHasta) {
 		
@@ -330,9 +243,8 @@ public class SmartGrids implements ISmartGrids {
 	    
 	    LocalDate hasta = LocalDate.parse(fechaHasta); //convierte el string en LocalDate
 		
-		if(!conjuntoPlantas.containsKey(nombre)) { //verifica si la planta no existe en el diccionario
-			throw new RuntimeException("Planta no registrada");
-		}
+		Planta planta= obtenerPlanta(nombre);//recordar que tmb chequea que no exista la planta
+		
 		if(desde.isAfter(hasta)) { 
 			throw new RuntimeException("La fechaDesde no puede ser posterior a la fechaHasta");
 		}
@@ -345,7 +257,6 @@ public class SmartGrids implements ISmartGrids {
 			return histograma;
 		}
 		
-		Planta planta= conjuntoPlantas.get(nombre);
 		
 		for (LocalDate dia=desde; !dia.isAfter(hasta); dia= dia.plusDays(1)) { //recorre los días desde el comienzo hasta el fin
 			
@@ -511,69 +422,35 @@ public class SmartGrids implements ISmartGrids {
 		}
 		return borrados;
 	}
-	@Override
-	public List<String> plantasOrdenadasPorEnergiaGenerada() {
-
-	    HashMap<String, Double> totales = new HashMap<>();// guarda la planta y el total de energía generada por cada planta
-
-	    for (String nombre : conjuntoPlantas.keySet()) {//recorre las plantas
-
-	        HashMap<LocalDateTime, Monitoreo> diccionarioInterior= conjuntoMonitoreos.get(nombre); //obtiene el diccionario interior
-
-	        double totalGenerado = 0;
-
-	        if (diccionarioInterior != null) {//verifica si la planta tiene monitoreos registrados
-
-	            for (LocalDateTime fechaHora : diccionarioInterior.keySet()) { //recorre el diccionario interior
-
-	                Monitoreo monitoreo = diccionarioInterior.get(fechaHora);
-
-	                if (monitoreo != null) {
-	                    totalGenerado += monitoreo.getEnergiaGenerada();//suma la energía generada al totalGenerado de esa planta
-	                }
-	            }
-	        }
-	        totales.put(nombre, totalGenerado); //se guarda el total calculado en el HashMap
-	    }
-
-	    
-	    
-	    
-
-	    List<String> resultado = new ArrayList<>(); //lista para guardar las plantas ordenadas
-	    List<Double> energias = new ArrayList<>(); //lista auxiliar para guardar el total de energias de cada planta
-
-	    for (String nombre : totales.keySet()) { //recorre el diccionario de plantas y energias totales
-
-	        double energia = totales.get(nombre);//toma la energia total de esa planta
-	        int posicion = 0;
-
-
-	        while (posicion < energias.size()// Busca la posición según la energía.
-	                && energias.get(posicion) >= energia) {
-	            posicion++;
-	        }
-
-	        // Insertamos ambos datos en la misma posición.
-	        energias.add(posicion, energia);
-	        resultado.add(posicion, nombre + ": " + energia);
-	    }
-
-	    return resultado;
-	}
 	
+@Override
+public List<String> plantasOrdenadasPorEnergiaGenerada() {
 
-	
-	/*
-     * 13. Dado un fecha y hora, se debe devolver los nombres de todas las plantas que estuvieron inactivas en ese momento.
-     * 
-     */
+    List<String> resultado = new ArrayList<>(); // textos "nombre: energia" ordenados de mayor a menor
+    List<Double> energias = new ArrayList<>();  // energias en el mismo orden, para comparar
+
+    for (String nombre : ordenPlantas) { // en orden de registro, asi los empates quedan predecibles
+
+        double energia = totalGenerado(nombre); // reutiliza el calculo del total
+        int posicion = 0;
+
+        while (posicion < energias.size() && energias.get(posicion) >= energia) { // busca su lugar
+            posicion++;
+        }
+
+        energias.add(posicion, energia);
+        resultado.add(posicion, nombre + ": " + energia);
+    }
+    return resultado;
+}
+
+
 	
 	@Override
 	public List<String> plantasInactivasEn(String fechaHora) {
 		
 		List<String> lista = new ArrayList<>();
-		LocalDateTime fecha= LocalDateTime.parse(fechaHora);
+		LocalDateTime fecha = normalizarFecha(fechaHora);
 		
 		for(String nombre: conjuntoPlantas.keySet()) { //recorre las plantas
 			
@@ -585,6 +462,8 @@ public class SmartGrids implements ISmartGrids {
 				LocalDateTime fin= registroInactividad.get(inicio);
 				
 				//estaba mal porque los is estaban al reves if(!fecha.isAfter(inicio)&& (fin==null || fecha.isBefore(fin))){  
+				
+				
 				if (!fecha.isBefore(inicio) && (fin == null || fecha.isBefore(fin))) { //verifica que la fecha esté después del inicioInactividad, y antes del finInactividad 
 					lista.add(nombre);  //si fecha está entre ese periodo, agrega el nombre de la planta a la lista, deja de recorrer el registro, y salta a la siguiente planta.
 					break;
@@ -597,14 +476,12 @@ public class SmartGrids implements ISmartGrids {
 	
 	//devuelve la planta o lanza excepción si no existe
 	private Planta obtenerPlanta(String nombre) {
-	    if (!conjuntoPlantas.containsKey(nombre)) {
-	        throw new RuntimeException("No existe esa planta");
-	    }
+		noExistePlanta(nombre);
 	    return conjuntoPlantas.get(nombre);
 	}
 
 	//chequea que no sea null y convierte el String a LocalDateTime
-	private LocalDateTime parsearFecha(String fechaHora) {
+	private LocalDateTime normalizarFecha(String fechaHora) {
 	    if (fechaHora == null) {
 	        throw new RuntimeException("La hora no puede ser nula");
 	    }
@@ -668,4 +545,25 @@ public class SmartGrids implements ISmartGrids {
 		}
 		return sb.toString();
 	}
+
+	private void existePlanta(String nombre) {
+		if (conjuntoPlantas.containsKey(nombre)) {
+			throw new IllegalArgumentException("Ya existe una planta con ese nombre");
+		}
+	}
+
+	private void noExistePlanta(String nombre) {
+		if (!conjuntoPlantas.containsKey(nombre)) {
+			throw new IllegalArgumentException("No existe una planta con ese nombre");
+		}
+	}
+
+	private void guardarPlanta(String nombre, Planta planta) {
+		conjuntoPlantas.put(nombre, planta);
+		ordenPlantas.add(nombre);
+		conjuntoMonitoreos.put(nombre, new HashMap<>());
+	}
+
+
+
 }

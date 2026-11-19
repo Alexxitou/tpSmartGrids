@@ -9,7 +9,7 @@ public abstract class PlantaRenovable extends Planta {
 	
 	public PlantaRenovable(String nombre, String direccion, double capacidadMaxima, String fechaHoraPuestaEnFuncionamiento, String fuentePrimaria,double eficienciaPromedio) {
 		super(nombre,direccion,capacidadMaxima,fechaHoraPuestaEnFuncionamiento);
-		if (fuentePrimaria==null || fuentePrimaria=="") {
+		if (fuentePrimaria==null || fuentePrimaria.isEmpty()) {
 			throw new RuntimeException("Fuente Primaria no válida");
 		}
 		if (eficienciaPromedio<0 || eficienciaPromedio>1) {

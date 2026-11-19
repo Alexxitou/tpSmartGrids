@@ -15,10 +15,10 @@ public abstract class Planta {
 	
 	
 	public Planta(String nombre, String direccion, double capacidadMaxima, String fechaHoraPuestaEnFuncionamiento) {
-		if(nombre== null|| nombre =="") {
+		if(nombre== null|| nombre.isEmpty()) {
 			throw new RuntimeException("Nombre no válido");
 		}
-		if (direccion == null || direccion=="") {
+		if (direccion == null || direccion.isEmpty()) {
 	        throw new RuntimeException("Dirección no válida");
 	    }
 		if (capacidadMaxima <= 0) {
@@ -92,17 +92,17 @@ public abstract class Planta {
 		st.append("Nombre: ").append(nombre).append("\n");
 		st.append("Dirección: ").append(direccion).append("\n");
 		st.append("Capacidad máxima de generación: ").append(capacidadMaxima).append("\n");
-		String estado; //esto es para guardar el estado
-        
-        if (estaActiva()) {
-            estado = "ACTIVA";
-        } else {
-            estado = "INACTIVA";
-        }
-		st.append("Estado: ").append(estado).append("\n");
+		st.append("Estado: ").append(getEstadoTexto()).append("\n");
 		st.append("Puesta en funcionamiento: ").append(fechaHoraPuestaEnFuncionamiento).append("\n");
 		
 		return st.toString();
 	}
+
+	public String getEstadoTexto() {
+    if (estadoPlanta) {
+        return "ACTIVA";
+    }
+    return "INACTIVA";
+}
 	
 }

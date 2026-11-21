@@ -13,26 +13,13 @@ public class SmartGrids implements ISmartGrids {
 	
 	private HashMap<String,Planta> conjuntoPlantas; //<nombre,Planta>
 	private HashMap<String,HashMap<LocalDateTime,Monitoreo>> conjuntoMonitoreos; //<nombre, <fechaHora, Monitoreo>>
-	private ArrayList<String> ordenPlantas; //Recorrer las plantas en el orden en que se cargaron. consultarPlantas() 
+	private ArrayList<String> ordenPlantas; //recorrer las plantas en el orden en que se cargaron. consultarPlantas() 
 
 	public SmartGrids() {
 		conjuntoPlantas = new HashMap<>();
 		conjuntoMonitoreos= new HashMap<>();
 		ordenPlantas= new ArrayList<>();
 	}
-	
-
-	
-    /*
-     * 1.a) Registran una planta con sus datos y caracteristicas  ✅
-     * 
-     * Por defecto la planta se crea en estado activa.  
-     * 
-     * @throws RuntimeException si ya existe ese nombre o falta o es 
-     *         inaceptable algun dato.
-     */
-	
-	
 
 	@Override
 	public void registrarPlantaSolar(String nombre, String direccion, double capacidadMaxima,
@@ -40,7 +27,7 @@ public class SmartGrids implements ISmartGrids {
 			double superficieCubierta, int cantidadPaneles, double horasRadiacionDiaria) {
 		
 		existePlanta(nombre);
-		//crear la planta
+
 		PlantaSolar Planta= new PlantaSolar(nombre, direccion, capacidadMaxima, fechaHoraPuestaEnFuncionamiento, fuentePrimaria, eficienciaPromedio, superficieCubierta, cantidadPaneles, horasRadiacionDiaria);
 		
 		guardarPlanta(nombre, Planta);
@@ -146,11 +133,13 @@ public class SmartGrids implements ISmartGrids {
 
 	}
 
+
 	@Override
 	public boolean estaActiva(String nombre) {
 		Planta planta = obtenerPlanta(nombre);
 		return planta.estaActiva(); //devuelve el estado
 	}
+
 
 	@Override
 	public void registrarMonitoreo(String nombre, String fechaHora, double energiaGenerada, int incidencias) {
@@ -164,6 +153,7 @@ public class SmartGrids implements ISmartGrids {
 
 	    guardarMonitoreo(nombre, fecha, new Monitoreo(planta, fecha, energiaGenerada, incidencias));
 	}
+
 
 	@Override
 	public void registrarMonitoreo(String nombre, String fechaHora, double energiaGenerada, int incidencias,
@@ -189,6 +179,8 @@ public class SmartGrids implements ISmartGrids {
 	    guardarMonitoreo(nombre, fecha, new MonitoreoTermica(planta, fecha, energiaGenerada, incidencias, co2Emitido, combustibleUtilizado));
 	}
 
+
+
 	@Override
 	public double totalGenerado(String nombre) {
 
@@ -205,6 +197,7 @@ public class SmartGrids implements ISmartGrids {
 
 	}
 
+	
 
 	@Override
 	public int[] incidenciasPorHora(String nombre) {
@@ -217,21 +210,14 @@ public class SmartGrids implements ISmartGrids {
 
 	    HashMap<LocalDateTime, Monitoreo> diccionarioInterior= conjuntoMonitoreos.get(nombre); //Toma el diccionario Interior de conjuntoMonitoreos
 
-
-	    if (diccionarioInterior == null) {// Si todavía no tiene monitoreos, devuelve los 24 ceros.
-	        return resultado;
-	    }
-
 	    for (LocalDateTime fechaHora : diccionarioInterior.keySet()) {//recorre el diccionario interior.
 
 	        Monitoreo monitoreo = diccionarioInterior.get(fechaHora); //toma el monitoreo del diccionario interior
 
-	        if (monitoreo != null) {// Ignora las horas que no tienen monitoreo.
+	        int hora = fechaHora.getHour();// Obtiene la hora del día
 
-	            int hora = fechaHora.getHour();// Obtiene la hora del día
+	        resultado[hora] += monitoreo.getCantidadIncidencias(); // guarda las incidencias en la posición correspondiente.
 
-	            resultado[hora] += monitoreo.getCantidadIncidencias(); // Acumula las incidencias en la posición correspondiente.
-	        }
 	    }
 	    return resultado;
 	}
@@ -239,24 +225,18 @@ public class SmartGrids implements ISmartGrids {
 	@Override
 	public int[] histogramaCumplimiento(String nombre, String fechaDesde, String fechaHasta) {
 		
-		LocalDate desde = LocalDate.parse(fechaDesde); //convierte el string en LocalDate
-	    
-	    LocalDate hasta = LocalDate.parse(fechaHasta); //convierte el string en LocalDate
-		
-		Planta planta= obtenerPlanta(nombre);//recordar que tmb chequea que no exista la planta
+		LocalDate desde = normalizarDia(fechaDesde);
+		LocalDate hasta = normalizarDia(fechaHasta);
+
+		Planta planta= obtenerPlanta(nombre);
 		
 		if(desde.isAfter(hasta)) { 
 			throw new RuntimeException("La fechaDesde no puede ser posterior a la fechaHasta");
 		}
 		
-		int[] histograma = new int[24]; // crea la lista con 24 espacios vacios
+		int[] histograma = new int[24];
 		
 		HashMap<LocalDateTime, Monitoreo> diccionarioInterior = conjuntoMonitoreos.get(nombre); //toma el diccionario de Monitoreos de la planta correspondiente
-		
-		if(diccionarioInterior==null) {//si el diccionario está vacío, simplemente devuelve el arreglo con los 24 espacios vacios.
-			return histograma;
-		}
-		
 		
 		for (LocalDate dia=desde; !dia.isAfter(hasta); dia= dia.plusDays(1)) { //recorre los días desde el comienzo hasta el fin
 			
@@ -299,11 +279,7 @@ public class SmartGrids implements ISmartGrids {
 	    }
 	    return resultado;
 	}
-	/*
-     * 9) Devuelve nombres de las plantas que nunca cumplieron la cuota, 
-     * incluso si no tienen monitoreos.
-     */
-	
+
 	@Override
 	public List<String> plantasQueNuncaCumplieronCuota() {
 		
@@ -333,23 +309,6 @@ public class SmartGrids implements ISmartGrids {
 
 
 
-
-	/*
-     * 10) Devuelve para cada planta eolica, las horas (de 0 a 23) con 
-     * registros en las que nunca se alcanzo la velocidad minima del viento.
-     * Se debe respetar el siguiente formato:
-     * """
-     * Plantas Eolicas: Horas con poco viento
-     * - Planta 1:  5 m/s
-     *        07: 2 m/s
-     *        11: 3 m/s
-     *        12: 1 m/s
-     *        13: 0 m/s  
-     * - Mi Super Planta:  4 m/s
-     *        07: 2 m/s
-     *        11: 3 m/s
-     * """
-     */
 	@Override
 	public String horasSinVelocidadMinimaPorPlantaEolica() {
 
@@ -474,6 +433,12 @@ public List<String> plantasOrdenadasPorEnergiaGenerada() {
 	}
 	
 	
+	/*
+	-------------------
+	METODOS AUXILIARES 
+	-------------------
+	*/
+
 	//devuelve la planta o lanza excepción si no existe
 	private Planta obtenerPlanta(String nombre) {
 		noExistePlanta(nombre);
@@ -488,6 +453,13 @@ public List<String> plantasOrdenadasPorEnergiaGenerada() {
 	    return LocalDateTime.parse(fechaHora);
 	}
 
+
+	private LocalDate normalizarDia(String fecha) {
+		if (fecha == null) {
+			throw new RuntimeException("La fecha no puede ser nula");
+		}
+		return LocalDate.parse(fecha);
+	}
 	//devuelve la planta si puede recibir un monitoreo en esa fecha: existe, está activa y no es anterior a la puesta en marcha
 	private Planta obtenerPlantaParaMonitoreo(String nombre, LocalDateTime fecha) {
 	    Planta planta = obtenerPlanta(nombre);
@@ -510,6 +482,7 @@ public List<String> plantasOrdenadasPorEnergiaGenerada() {
 	    }
 	    monitoreosDePlanta.put(fecha, monitoreo);
 	}
+
 	//para imprimir SmartGrids
 	@Override
 	public String toString() {

@@ -45,12 +45,10 @@ public abstract class Planta {
 	
 	
 	
-	
 	public void activar(LocalDateTime finDeInactividad) {
 		if(!estadoPlanta) {
 			
 			if(inicioInactividad!=null) {
-				
 				registroInactividad.put(inicioInactividad,finDeInactividad); //registra el inicio de inactividad(si ya estaba inactiva antes), y la fecha en la que se activa
 				inicioInactividad=null; //inicioInactividad se convierte en null porque ya no hay inactividad
 			}
@@ -60,6 +58,8 @@ public abstract class Planta {
 		}
 		
 	}
+
+	
 	
 	public boolean estaActiva() {
 		return estadoPlanta; 
